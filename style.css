@@ -1,0 +1,55 @@
+body {
+  color: white;
+  background-color: black;
+  box-sizing: border-box;
+  margin: 0;
+}
+nav form {
+  display: inline;
+}
+.navbar-nav {
+  display: block;
+  columns: 10em 5;
+  padding: 2em;
+}
+.navbar-dark .navbar-nav .nav-link {
+  color: rgba(255, 255, 255, 0.8);
+}
+#main {
+  padding: 1em;
+}
+#commenter {
+  display: none;
+}
+#commentField {
+  width: 75vw;
+  height: 68vh;
+}
+pre {
+  color: white;
+  white-space: pre-wrap;
+  font-size: large;
+  font-weight: bold;
+}
+-webkit-media-controls-panel {
+  max-width: 50px;
+}
+#comments {
+  display: flex;
+}
+#comments section {
+  margin: auto;
+  font-size: large;
+}
+#commentSections {
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+#filelist {
+  columns: 20em 3;
+  padding: 2em;
+}
+img {
+  max-width: 100%;
+}
+
