@@ -71,10 +71,10 @@
 
   <script>
     function discard(event) {
-      var saveButton = document.getElementById("saveButton");
-      if (saveButton) { saveButton.style.visibility = "hidden"; }
       var newNoteButton = document.getElementById("validateButton");
-      if (newNoteButton) { newNoteButton.style.visibility = "visible"; }
+      newNoteButton.style.visibility = "visible";
+      newNoteButton.type = "button";
+      newNoteButton.onclick = newNote;
       var modButton = document.getElementById("modifyToggle");
       modButton.onclick = modifyComment;
       modButton.textContent = "Modifier";
@@ -85,14 +85,13 @@
       commenter.style.display = "none";
     }
     function modifyComment(event) {
-      var newNoteButton = document.getElementById("validateButton");
-      if (newNoteButton) { newNoteButton.style.visibility = "hidden"; }
-      var saveButton = document.getElementById("saveButton");
-      if (saveButton) {
-          saveButton.style.visibility = "visible";
-          saveButton.textContent = "Enregistrer";
-          saveButton.onclick = "";
-      }
+      var saveButton = document.getElementById("validateButton");
+      saveButton.style.visibility = "visible";
+      saveButton.type = "input";
+      saveButton.name = "submit";
+      saveButton.textContent = "Enregistrer";
+      saveButton.onclick = "";
+      saveButton.form = postComment;
       var modButton = document.getElementById("modifyToggle");
       modButton.onclick = discard;
       modButton.textContent = "Annuler";
@@ -108,14 +107,13 @@
       commentField.textContent = `<?php echo $raw_comment; ?>`;
     }
     function newNote(event) {
-      var newNoteButton = document.getElementById("validateButton");
-      if (newNoteButton) { newNoteButton.style.visibility = "hidden"; }
-      var saveButton = document.getElementById("saveButton");
-      if (saveButton) {
-          saveButton.style.visibility = "visible";
-          saveButton.textContent = "Enregistrer";
-          saveButton.onclick = "";
-      }
+      var saveButton = document.getElementById("validateButton");
+      saveButton.style.visibility = "visible";
+      saveButton.type = "input";
+      saveButton.name = "submit";
+      saveButton.textContent = "Enregistrer";
+      saveButton.onclick = "";
+      saveButton.form = postComment;
       var modButton = document.getElementById("modifyToggle");
       modButton.onclick = discard;
       modButton.textContent = "Annuler";
@@ -157,16 +155,15 @@
           }
         ?>
 
-        <button onclick='newNote();' type='button' id='validateButton' class='btn btn-secondary' style="visibility: hidden;">nouvelle note</button>
-        <button type="submit" name="submit" id="saveButton" form="postComment" class="btn btn-primary" style="visibility: hidden;">Enregistrer</button>
+        <button onclick='modifyComment();' type="button" class="btn btn-secondary" id="modifyToggle">Modifier</button>
       </span>
 
       <span class="">
-        <button onclick='modifyComment();' type="button" class="btn btn-secondary" id="modifyToggle">Modifier</button>
-        <form action="deleteComment.php" method="POST">
-          <input id="deltitle" name="title" type="hidden" value="<?php echo $title; ?>" />
-          <input type="submit" name="submit" class="btn btn-primary" value="Supprimer">
-        </form>
+        <button onclick='newNote();' type='button' id='validateButton' class='btn btn-secondary' style="visibility: hidden;">nouvelle note</button>
+<!--
+        <button type="submit" name="submit" id="saveButton" form="postComment" class="btn btn-primary" style="visibility: hidden;">Enregistrer</button>
+-->
+        <input type="submit" name="submit" class="btn btn-primary" value="Supprimer" form="deleteComment">
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -186,9 +183,7 @@
             }
   
           ?>
-  <!--
-          <li id="newnote"><a class='btn btn-secondary' href='?newnote=true'>nouvelle note</a></li>
-  -->
+
         </ul>
       </div>
 
@@ -222,12 +217,19 @@
 
         ?>
 
+      <!-- Hidden div with the delete prototype for current article : -->
+      <div class="container">
+        <form action="deleteComment.php" id="deleteComment" method="POST">
+          <input id="deltitle" name="title" type="hidden" value="<?php echo $title; ?>" />
+        </form>
+      </div>
+
       <!-- Hidden div with the modifiable raw comment : -->
       <div id="commenter" class="container">
         <form action="postComment.php" id='postComment' method="POST">
           <input id="titleField" name="title" value="<?php echo $title; ?>" />
 
-          <textarea name="comment" id="commentField"><?php echo $raw_comment; ?></textarea>
+          <textarea id="commentField" name="comment"><?php echo $raw_comment; ?></textarea>
         </form>
       </div>
 

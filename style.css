@@ -4,6 +4,9 @@ body {
   box-sizing: border-box;
   margin: 0;
 }
+nav > span {
+  display: flex;
+}
 nav form {
   display: inline;
 }

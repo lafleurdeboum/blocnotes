@@ -48,7 +48,7 @@
         $writeFailed = $db->querySingle(
             "UPDATE articles SET comment = '" . SQLite3::escapeString($comment) . "' WHERE title = '" . $title . "';"
         );
-        if ($write_failed) {
+        if ($writeFailed) {
           $returnQuery["alertType"] = "alert-warning";
           $returnQuery["alert"] = "Il y a eu un problème.
               Le commentaire n'a pas été mis à jour pour la note <b>$title</b>";
