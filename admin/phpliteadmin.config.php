@@ -13,7 +13,7 @@
 $password = 'libertea';
 
 //directory relative to this file to search for databases (if false, manually list databases in the $databases variable)
-$directory = '.';
+$directory = '../engine';
 
 //whether or not to scan the subdirectories of the above directory infinitely deep
 $subdirectories = false;

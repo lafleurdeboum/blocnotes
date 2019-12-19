@@ -71,7 +71,7 @@ function readArticle() {
     logResult(answer.alert, answer.alertType);
   });
 
-  XHR.open("POST", "readComment.php");
+  XHR.open("POST", "engine/readNote.php");
   XHR.send(FD);
 }
 
@@ -95,7 +95,7 @@ function submitArticle() {
     logResult(answer.alert, answer.alertType);
   });
 
-  XHR.open("POST", "postComment.php");
+  XHR.open("POST", "engine/postNote.php");
   XHR.send(FD);
 }
 
@@ -107,7 +107,7 @@ function deleteNote() {
     title = "";
     readArticle();
   });
-  XHR.open("GET", "deleteNote.php?title=" + title, true);
+  XHR.open("GET", "engine/deleteNote.php?title=" + title, true);
   XHR.send();
 }
 
