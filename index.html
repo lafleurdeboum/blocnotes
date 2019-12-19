@@ -11,172 +11,7 @@
 
   <link rel="stylesheet" href="css/bootstrap.min.css" />
   <link rel="stylesheet" type="text/css" href="css/style.css" />
-  <script>
-
-    // TODO Make readArticle a GET method, so we can start it during loading
-    // TODO Deal with the flickering of the editor at load
-    var $_GET = {},
-      args = location.search.substr(1).split(/&/);
-    for (var i=0; i<args.length; ++i) {
-      var tmp = args[i].split(/=/);
-      if (tmp[0] != "") {
-        $_GET[decodeURIComponent(tmp[0])] = decodeURIComponent(
-            tmp.slice(1).join("").replace("+", " "));
-      }
-    }
-
-    var title = $_GET["title"];
-    var comment;
-    var articles = new Array();
-
-    if (!title) { title = ""; }
-
-    function logResult(text, alertType) {
-      var messagePopup = document.createElement("div");
-      messagePopup.classList.add("alert",
-                                 alertType,
-                                 "alert-dismissible",
-                                 "fade",
-                                 "show");
-      messagePopup.role = "alert"; // TODO check this attribute
-      messagePopup.innerHTML = text;
-      let mainWindow = document.getElementById("main");
-      mainWindow.prepend(messagePopup);
-      setTimeout(function() {
-        mainWindow.removeChild(messagePopup);
-      }, 3000);
-      console.log(text);
-    }
-
-    function populateMenu() {
-      let menu = document.getElementById("menuList");
-      articles.forEach((article) => {
-        let link = document.createElement("li");
-        link.innerHTML = "<a href='?title=" + article + "'>" + article + "</a>";
-        link.classList.add("nav-item");
-        menu.appendChild(link);
-      });
-    }
-
-    function readArticle() {
-      let form = document.getElementById("postComment");
-      let commentDiv = document.getElementById("commentSections");
-      form.title.value = title;
-      const XHR = new XMLHttpRequest();
-      const FD = new FormData(form);
-
-      XHR.addEventListener("load", function(event) {
-        readMode();
-        var answer = JSON.parse(event.target.responseText);
-        articles = answer.articles;
-        populateMenu();
-        commentDiv.innerHTML = answer.comment;
-        comment = answer.raw_comment;
-        commentField.textContent = comment;
-        if (comment == "") {
-          logResult(answer.alert, answer.alertType);
-        }
-      });
-      XHR.addEventListener("error", function(event) {
-        var answer = JSON.parse(event.target.responseText);
-        logResult(answer.alert, answer.alertType);
-      });
-
-      XHR.open("POST", "readComment.php");
-      XHR.send(FD);
-    }
-
-    function submitArticle() {
-      let form = document.getElementById("postComment");
-      let commentDiv = document.getElementById("commentSections");
-      const XHR = new XMLHttpRequest();
-      const FD = new FormData(form);
-
-      XHR.addEventListener("load", function(event) {
-        readMode();
-        var answer = JSON.parse(event.target.responseText);
-        commentDiv.innerHTML = answer.comment;
-        comment = answer.raw_comment;
-        if (comment == "") {
-          logResult(answer.alert, answer.alertType);
-        }
-      });
-      XHR.addEventListener("error", function(event) {
-        var answer = JSON.parse(event.target.responseText);
-        logResult(answer.alert, answer.alertType);
-      });
-
-      XHR.open("POST", "postComment.php");
-      XHR.send(FD);
-    }
-
-    function editMode() {
-      var editor = document.getElementById("editor");
-      var comments = document.getElementById("comments");
-      var titleField = document.getElementById("titleField");
-      var commentField = document.getElementById("commentField");
-      comments.style.display = "none";
-      titleField.style.display = "none";
-      commentField.style.display = "block";
-      editor.style.display = "block";
-
-      titleField.value = title;
-      titleField.textContent = title;
-      commentField.textContent = comment;
-
-      var saveButton = document.getElementById("validateButton");
-      saveButton.textContent = "Enregistrer";
-      saveButton.style.display = "inline";
-      //saveButton.removeEventListener('click', editMode);
-      saveButton.removeEventListener('click', newNote);
-      saveButton.addEventListener('click', submitArticle);
-
-      var modToggle = document.getElementById("modifyToggle");
-      modToggle.textContent = "Annuler";
-      modToggle.removeEventListener('click', editMode);
-      modToggle.addEventListener('click', readMode);
-    }
-
-    function readMode() {
-      var editor = document.getElementById("editor");
-      var comments = document.getElementById("comments");
-      comments.style.display = "block";
-      editor.style.display = "none";
-
-      var newNoteButton = document.getElementById("validateButton");
-      newNoteButton.textContent = "Nouvelle note";
-      newNoteButton.removeEventListener('click', submitArticle);
-      newNoteButton.addEventListener('click', newNote);
-      if (title) {
-        newNoteButton.style.display = "none";
-      } else {
-        newNoteButton.style.display = "inline";
-      }
-
-      var modToggle = document.getElementById("modifyToggle");
-      modToggle.textContent = "Modifier";
-      modToggle.removeEventListener('click', readMode);
-      modToggle.addEventListener('click', editMode);
-    }
-
-    function newNote() {
-      editMode();
-      var titleField = document.getElementById("titleField");
-      titleField.style.display = "block";
-      titleField.placeholder = "Nouvelle note";
-    }
-
-    document.addEventListener("DOMContentLoaded", function(event) {
-
-      var editor = document.getElementById("editor");
-      var comments = document.getElementById("comments");
-      var titleField = document.getElementById("titleField");
-      var commentField = document.getElementById("commentField");
-  
-      readArticle();
-    });
-
-  </script>
+  <script src="client.js" type="text/javascript"></script>
 
 </head>
 <body>
@@ -191,15 +26,15 @@
         Bloc Notes
       </a>
 
-      <!-- Span title -->
+      <span id="titleSpan"></span>
 
-      <button type="button" id="modifyToggle" class="btn btn-secondary">Modifier</button>
+      <button type='button' id='leftMostButton' class='btn btn-secondary'>nouvelle note</button>
     </span>
 
       <span class="">
-        <button type='button' id='validateButton' class='btn btn-secondary'>nouvelle note</button>
-        <input type="submit" name="submit" class="btn btn-primary" value="Supprimer" form="deleteComment">
-      </span>
+      <button type="button" id="leftButton" class="btn btn-secondary">Modifier</button>
+      <button type="button" id="rightButton" class="btn btn-secondary">Supprimer</button>
+    </span>
 
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <ul class="navbar-nav nav" id="menuList">
@@ -214,12 +49,6 @@
     <div id="comments" class="container">
       <div id="commentSections">
       </div>
-    </div>
-
-    <div class="container">
-      <form action="deleteComment.php" id="deleteComment" method="POST">
-        <input id="deltitle" name="title" type="hidden" value="" />
-      </form>
     </div>
 
     <div id="editor" class="container">
