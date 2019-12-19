@@ -1,4 +1,3 @@
-// TODO Make readArticle a GET method, so we can start it during loading
 // TODO Deal with the flickering of the editor at load
 
 var $_GET = {},
@@ -13,105 +12,62 @@ for (var i=0; i<args.length; ++i) {
 
 var title = $_GET["title"];
 var comment;
-var articles = new Array();
+var notes = new Array();
+var message;
+var messageType;
 
 if (!title) { title = ""; }
 
-function logResult(text, alertType) {
-  let message = document.createElement("div");
-  message.classList.add("alert",
-                             alertType,
-                             "alert-dismissible",
-                             "fade",
-                             "show");
-  message.role = "alert"; // TODO check this attribute
-  message.innerHTML = text;
-  let mainWindow = document.getElementById("main");
-  mainWindow.prepend(message);
-  setTimeout(function() {
-    mainWindow.removeChild(message);
-  }, 3000);
-  console.log(text);
-}
 
-function populateMenu() {
-  let menu = document.getElementById("menuList");
-  menu.innerHTML = "";
-  articles.forEach((article) => {
-    let link = document.createElement("li");
-    link.innerHTML = "<a href='?title=" + article + "'>" + article + "</a>";
-    link.classList.add("nav-item");
-    menu.appendChild(link);
-  });
-}
-
-function readArticle() {
-  // Request the note entitled "title" :
-  // TODO should reload the menu (DEBUG) and modify URL.
-  let form = document.getElementById("postComment");
+function readNote() {
   let commentDiv = document.getElementById("commentSections");
-  form.title.value = title;
-  const XHR = new XMLHttpRequest();
-  const FD = new FormData(form);
-
-  XHR.addEventListener("load", function(event) {
-    readMode();
-    var answer = JSON.parse(event.target.responseText);
-    articles = answer.articles;
+  let titleSpan = document.getElementById("titleSpan");
+  engine("readNote", function(event) {
+    readView();
     populateMenu();
-    commentDiv.innerHTML = answer.comment;
-    comment = answer.raw_comment;
-    commentField.textContent = comment;
-    if (comment == "") {
-      logResult(answer.alert, answer.alertType);
+    commentDiv.innerHTML = comment;
+    commentField.textContent = raw_comment;
+    if (title != "") {
+      titleSpan.innerHTML = "<h4> > " + title + "</h4>";
+    } else {
+      titleSpan.innerHTML = "";
     }
+    messageUser(message, messageType);
   });
-  XHR.addEventListener("error", function(event) {
-    var answer = JSON.parse(event.target.responseText);
-    logResult(answer.alert, answer.alertType);
-  });
-
-  XHR.open("POST", "engine/readNote.php");
-  XHR.send(FD);
 }
 
-function submitArticle() {
-  let form = document.getElementById("postComment");
+function postNote() {
   let commentDiv = document.getElementById("commentSections");
-  const XHR = new XMLHttpRequest();
-  const FD = new FormData(form);
-
-  XHR.addEventListener("load", function(event) {
-    readMode();
-    var answer = JSON.parse(event.target.responseText);
-    commentDiv.innerHTML = answer.comment;
-    comment = answer.raw_comment;
+  engine("postNote", function(event) {
+    readView();
+    populateMenu();
+    commentDiv.innerHTML = comment;
+    commentField.textContent = raw_comment;
     if (comment == "") {
-      logResult(answer.alert, answer.alertType);
+      messageUser(message, messageType);
     }
   });
-  XHR.addEventListener("error", function(event) {
-    var answer = JSON.parse(event.target.responseText);
-    logResult(answer.alert, answer.alertType);
-  });
-
-  XHR.open("POST", "engine/postNote.php");
-  XHR.send(FD);
 }
 
 function deleteNote() {
-  const XHR = new XMLHttpRequest();
-  XHR.addEventListener("load", function(event) {
-    var answer = JSON.parse(event.target.responseText);
-    logResult(answer.alert, answer.alertType);
+  engine("deleteNote", function(event) {
+    messageUser(message, messageType);
     title = "";
-    readArticle();
+    titleField.value = "";
+    readNote();
   });
-  XHR.open("GET", "engine/deleteNote.php?title=" + title, true);
-  XHR.send();
 }
 
-function editMode() {
+function newNote() {
+  editView();
+  var titleField = document.getElementById("titleField");
+  titleField.style.display = "block";
+  titleField.type = "input";
+  titleField.placeholder = "Nouvelle note";
+}
+
+
+function editView() {
   var editor = document.getElementById("editor");
   var comments = document.getElementById("comments");
   var titleField = document.getElementById("titleField");
@@ -122,21 +78,21 @@ function editMode() {
   editor.style.display = "block";
 
   titleField.textContent = title;
-  commentField.textContent = comment;
+  commentField.textContent = raw_comment;
 
   var saveButton = document.getElementById("leftButton");
   saveButton.textContent = "Enregistrer";
   saveButton.removeEventListener('click', newNote);
-  saveButton.addEventListener('click', submitArticle);
+  saveButton.addEventListener('click', postNote);
 
   var modToggle = document.getElementById("leftMostButton");
   modToggle.textContent = "Annuler";
   modToggle.style.display = "inline";
-  modToggle.removeEventListener('click', editMode);
-  modToggle.addEventListener('click', readMode);
+  modToggle.removeEventListener('click', editView);
+  modToggle.addEventListener('click', readView);
 }
 
-function readMode() {
+function readView() {
   var editor = document.getElementById("editor");
   var comments = document.getElementById("comments");
   comments.style.display = "block";
@@ -144,7 +100,7 @@ function readMode() {
 
   var newNoteButton = document.getElementById("leftMostButton");
   newNoteButton.textContent = "Nouvelle note";
-  newNoteButton.removeEventListener('click', readMode);
+  newNoteButton.removeEventListener('click', readView);
   newNoteButton.addEventListener('click', newNote);
   if (title) {
     newNoteButton.style.display = "none";
@@ -154,32 +110,74 @@ function readMode() {
 
   var modToggle = document.getElementById("leftButton");
   modToggle.textContent = "Modifier";
-  modToggle.removeEventListener('click', submitArticle);
-  modToggle.addEventListener('click', editMode);
+  modToggle.removeEventListener('click', postNote);
+  modToggle.addEventListener('click', editView);
 }
 
-function newNote() {
-  editMode();
-  var titleField = document.getElementById("titleField");
-  titleField.style.display = "block";
-  titleField.placeholder = "Nouvelle note";
-  titleField.textContent = "ok";
+
+function engine(action, callback) {
+  let form = document.getElementById("editorForm");
+  form.act.value = action;
+  console.log(form);
+  const XHR = new XMLHttpRequest();
+  const FD = new FormData(form);
+
+  XHR.addEventListener("load", function(event) {
+    var answer = JSON.parse(event.target.responseText);
+    comment = answer.comment;
+    raw_comment = answer.raw_comment;
+    notes = answer.notes;
+    message = answer.message;
+    messageType = answer.messageType;
+    callback(event);
+  });
+  XHR.addEventListener("error", function(event) {
+    var answer = JSON.parse(event.target.responseText);
+    messageUser(answer.message, answer.messageType);
+  });
+
+  XHR.open("POST", "engine.php");
+  XHR.send(FD);
+}
+
+function messageUser(message, messageType) {
+  if (message) {
+    let mainWindow = document.getElementById("main");
+    let messageDiv = document.createElement("div");
+    messageDiv.innerHTML = message;
+    messageDiv.classList.add("alert",
+                               messageType,
+                               "alert-dismissible",
+                               "fade",
+                               "show");
+    messageDiv.role = "alert"; // TODO check this attribute
+    mainWindow.prepend(messageDiv);
+    setTimeout(function() {
+      mainWindow.removeChild(messageDiv);
+    }, 3000);
+    console.log(message);
+  }
+}
+
+function populateMenu() {
+  let menu = document.getElementById("menuList");
+  menu.innerHTML = "";
+  notes.forEach((note) => {
+    let link = document.createElement("li");
+    link.innerHTML = "<a href='?title=" + note + "'>" + note + "</a>";
+    link.classList.add("nav-item");
+    menu.appendChild(link);
+  });
 }
 
 document.addEventListener("DOMContentLoaded", function(event) {
 
-  var editor = document.getElementById("editor");
-  var comments = document.getElementById("comments");
-  var titleSpan = document.getElementById("titleSpan");
   var titleField = document.getElementById("titleField");
-  var commentField = document.getElementById("commentField");
   var deleteButton = document.getElementById("rightButton");
 
-  if (title != "") {
-    titleSpan.innerHTML = "<h4> > " + title + "</h4>";
-  }
+  titleField.value = title;
   deleteButton.addEventListener('click', deleteNote);
-  readArticle();
+  readNote();
 
 });
 

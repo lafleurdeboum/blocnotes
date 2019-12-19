@@ -52,10 +52,11 @@
     </div>
 
     <div id="editor" class="container">
-      <form action="postComment.php" id='postComment' method="POST">
-        <input id="titleField" name="title" value="" />
+      <form id='editorForm' method="POST">
+        <input id="titleField" name="title" value="" type="hidden"/>
+        <input id="actField" name="act" value="" type="hidden"/>
 
-        <textarea id="commentField" name="comment"></textarea>
+        <textarea id="commentField" name="raw_comment"></textarea>
       </form>
     </div>
   </div>

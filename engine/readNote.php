@@ -1,23 +1,8 @@
 <?php
 
-  $dbFile = "notes.db";
-  $returnObject = array();
-  $referer = parse_url($_SERVER['HTTP_REFERER']);
-  $title = $_POST['title'];
-
-  $pool = "documents";
-  $alert = null;
-  $articleList = null;
-
   require_once 'Markdown/Markdown.inc.php';
   use Michelf\Markdown;
-  
-  if (! extension_loaded('sqlite3')) {
-    $alertType = "alert-warning";
-    $alert = "Pas de support sqlite3 ! Accès impossible à la base de données <b>$dbFile</b>";
-  } else {
-    $db = new SQLite3($dbFile);
-  
+
     $raw_comment = $db->querySingle(
         "SELECT comment FROM articles WHERE title = '$title';"
     );
@@ -26,8 +11,8 @@
     if($raw_comment == "") {
       $comment = "";
       // Only return a message if the note is empty :
-      $alertType = "alert-success";
-      $alert = "note vide : <b>$title</b>";
+      $messageType = "alert-success";
+      $message = "note vide : <b>$title</b>";
     } else {
       $comment = Markdown::defaultTransform($raw_comment);
       /*
@@ -49,28 +34,4 @@
       $comment = $displayable;
        */
     }
-  }
-
-  // List articles in db :
-  $articleList = array();
-  $articles = $db->query("SELECT title FROM articles;");
-  if ($articles) {
-    while ($article = $articles->fetchArray()) {
-      array_push($articleList, $article['title']);
-    }
-  }
-
-  $returnObject["title"] = $title;
-  $returnObject["raw_comment"] = $raw_comment;
-  $returnObject["comment"] = $comment;
-  if ($alert) {
-    $returnObject["alert"] = $alert;
-    $returnObject["alertType"] = $alertType;
-  }
-  if ($articleList) {
-    $returnObject["articles"] = $articleList;
-  }
-
-  echo json_encode($returnObject);
-  echo "\n";
 
