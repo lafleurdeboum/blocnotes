@@ -5,7 +5,7 @@ $action = $_POST["act"];
 $title = $_POST["title"] ?: "";
 $raw_comment = $_POST["raw_comment"] ?: "";
 $comment = "";
-$articleList = null;
+$noteList = null;
 $message = null;
 $messageType = null;
 
@@ -48,12 +48,12 @@ if (! extension_loaded('sqlite3')) {
       $comment = "here too";
   }
 
-  // List articles in db :
-  $articleList = array();
-  $articles = $db->query("SELECT title FROM articles;");
-  if ($articles) {
-    while ($article = $articles->fetchArray()) {
-      array_push($articleList, $article['title']);
+  // List notes in db :
+  $noteList = array();
+  $notes = $db->query("SELECT title FROM notes;");
+  if ($notes) {
+    while ($note = $notes->fetchArray()) {
+      array_push($noteList, $note['title']);
     }
   }
 }
@@ -65,8 +65,8 @@ if ($message) {
   $returnObject["message"] = $message;
   $returnObject["messageType"] = $messageType;
 }
-if ($articleList) {
-  $returnObject["articles"] = $articleList;
+if ($noteList) {
+  $returnObject["notes"] = $noteList;
 }
 
 echo json_encode($returnObject);

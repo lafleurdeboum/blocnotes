@@ -1,6 +1,6 @@
 <?php
 
-$result = $db->exec("DELETE FROM articles WHERE title = '$title';");
+$result = $db->exec("DELETE FROM notes WHERE title = '$title';");
 
 if ($result) {
   $messageType = "alert-success";

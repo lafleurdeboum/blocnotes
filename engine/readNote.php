@@ -4,7 +4,7 @@
   use Michelf\Markdown;
 
     $raw_comment = $db->querySingle(
-        "SELECT comment FROM articles WHERE title = '$title';"
+        "SELECT comment FROM notes WHERE title = '$title';"
     );
   
     // Turn comment into html using markdown :

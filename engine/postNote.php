@@ -4,12 +4,12 @@
   use Michelf\Markdown;
 
     $article_exists = $db->querySingle(
-        "SELECT EXISTS(SELECT comment FROM articles WHERE title = '$title');"
+        "SELECT EXISTS(SELECT comment FROM notes WHERE title = '$title');"
     );
 
     if ($article_exists) {
       $writeFailed = $db->querySingle(
-          "UPDATE articles SET comment = '" . SQLite3::escapeString($raw_comment) . "' WHERE title = '$title';"
+          "UPDATE notes SET comment = '" . SQLite3::escapeString($raw_comment) . "' WHERE title = '$title';"
       );
       if ($writeFailed) {
         $messageType = "alert-warning";
@@ -21,7 +21,7 @@
       }
     } else {   // $title is not in DB, create it :
       $result = $db->exec(
-        "INSERT OR IGNORE INTO articles (title, comment) VALUES ('$title',
+        "INSERT OR IGNORE INTO notes (title, comment) VALUES ('$title',
           '" . SQLite3::escapeString($raw_comment) . "' );"
       );
       if (! $result) {
@@ -38,7 +38,7 @@
     }
 
     $raw_comment = $db->querySingle(
-        "SELECT comment FROM articles WHERE title = '$title';"
+        "SELECT comment FROM notes WHERE title = '$title';"
     );
   
     // Turn comment into html using markdown :
