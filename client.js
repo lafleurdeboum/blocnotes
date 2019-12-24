@@ -20,13 +20,9 @@ if (!title) { title = ""; }
 
 
 function readNote() {
-  let commentDiv = document.getElementById("commentSections");
   let titleSpan = document.getElementById("titleSpan");
   engine("readNote", function(event) {
-    readView();
-    populateMenu();
-    commentDiv.innerHTML = comment;
-    commentField.textContent = raw_comment;
+    reload(event);
     if (title != "") {
       titleSpan.innerHTML = "<h4> > " + title + "</h4>";
     } else {
@@ -36,17 +32,12 @@ function readNote() {
   });
 }
 
-function postNote() {
-  let commentDiv = document.getElementById("commentSections");
-  engine("postNote", function(event) {
-    readView();
-    populateMenu();
-    commentDiv.innerHTML = comment;
-    commentField.textContent = raw_comment;
-    if (comment == "") {
-      messageUser(message, messageType);
-    }
-  });
+function saveNote() {
+  engine("saveNote", reload);
+}
+
+function modifyNote() {
+  engine("modifyNote", reload);
 }
 
 function deleteNote() {
@@ -60,10 +51,25 @@ function deleteNote() {
 
 function newNote() {
   editView();
+  var saveButton = document.getElementById("leftButton");
   var titleField = document.getElementById("titleField");
-  titleField.style.display = "block";
+
+  saveButton.removeEventListener('click', saveNote);
+  saveButton.addEventListener('click', saveNote);
+  //titleField.style.display = "block";
   titleField.type = "input";
   titleField.placeholder = "Nouvelle note";
+}
+
+function reload(event) {
+  readView();
+  populateMenu();
+  let commentDiv = document.getElementById("commentSections");
+  commentDiv.innerHTML = comment;
+  commentField.textContent = raw_comment;
+  if (comment == "") {
+    messageUser(message, messageType);
+  }
 }
 
 
@@ -72,8 +78,10 @@ function editView() {
   var comments = document.getElementById("comments");
   var titleField = document.getElementById("titleField");
   var commentField = document.getElementById("commentField");
+
   comments.style.display = "none";
-  titleField.style.display = "none";
+  //titleField.style.display = "none";
+  titleField.type = "hidden";
   commentField.style.display = "block";
   editor.style.display = "block";
 
@@ -83,7 +91,7 @@ function editView() {
   var saveButton = document.getElementById("leftButton");
   saveButton.textContent = "Enregistrer";
   saveButton.removeEventListener('click', newNote);
-  saveButton.addEventListener('click', postNote);
+  saveButton.addEventListener('click', saveNote);
 
   var modToggle = document.getElementById("leftMostButton");
   modToggle.textContent = "Annuler";
@@ -95,6 +103,7 @@ function editView() {
 function readView() {
   var editor = document.getElementById("editor");
   var comments = document.getElementById("comments");
+
   comments.style.display = "block";
   editor.style.display = "none";
 
@@ -110,7 +119,7 @@ function readView() {
 
   var modToggle = document.getElementById("leftButton");
   modToggle.textContent = "Modifier";
-  modToggle.removeEventListener('click', postNote);
+  modToggle.removeEventListener('click', saveNote);
   modToggle.addEventListener('click', editView);
 }
 
