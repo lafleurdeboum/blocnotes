@@ -9,6 +9,7 @@ $title = $_POST["title"] ?: "";
 $raw_comment = $_POST["raw_comment"] ?: "";
 $comment = "";
 $noteList = array();
+$documents = array();
 $message = null;
 $messageType = null;
 
@@ -22,12 +23,17 @@ if (! extension_loaded('sqlite3')) {
 
   $db = new SQLite3($dbFile);
 
-
   function readNote() {
-    global $db, $title, $raw_comment, $comment, $message, $messageType;
+    global $db, $title, $raw_comment, $comment, $message, $messageType, $documents;
     $raw_comment = $db->querySingle(
         "SELECT comment FROM notes WHERE title = '$title';"
     );
+    $documentQuery = $db->query(
+        "SELECT filename FROM documents WHERE '$title' LIKE attached_notes;"
+    );
+    while ($document = $documentQuery->fetchArray()) {
+        array_push($documents, $document['filename']);
+    }
   }
   
   function modifyNote() {
@@ -149,6 +155,7 @@ if($raw_comment == "") {
 $returnObject["title"] = $title;
 $returnObject["raw_comment"] = $raw_comment;
 $returnObject["comment"] = $comment;
+$returnObject["documents"] = $documents;
 if ($message) {
   $returnObject["message"] = $message;
   $returnObject["messageType"] = $messageType;
