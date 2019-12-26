@@ -30,7 +30,7 @@ if (! extension_loaded('sqlite3')) {
     );
     // List attached documents
     $documentQuery = $db->query(
-        "SELECT filename, filetype FROM documents WHERE attached_notes LIKE '%$title%';"
+        "SELECT filename, filetype FROM documents WHERE instr(attached_notes, '$title');"
     );
     while ($document = $documentQuery->fetchArray()) {
       array_push($documents, array(
