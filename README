@@ -1,0 +1,13 @@
+# blocnotes
+
+Just another sort of pastebin for the moment, nothing fancy. Supports Markdown
+though.
+
+## Install
+
+`git clone` it somewhere with http access. make shure the http server has write
+access to `admin` and `admin/notes.db`, and read access to `engine.php`,
+`index.html` and `client.js`. Then access through `index.html` online. In case
+something goes wrong with the DB, you can go in `admin` to get a sql web
+interface. Be shure to set the password in `admin/phpsqliteadmin.config.php`.
+

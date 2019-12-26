@@ -8,7 +8,7 @@ $action = $_POST["act"];
 $title = $_POST["title"] ?: "";
 $raw_comment = $_POST["raw_comment"] ?: "";
 $comment = "";
-$noteList = null;
+$noteList = array();
 $message = null;
 $messageType = null;
 
@@ -53,7 +53,7 @@ if (! extension_loaded('sqlite3')) {
     }
   }
   
-  function saveNote() {
+  function createNote() {
     global $db, $title, $raw_comment, $comment, $message, $messageType;
     $article_exists = $db->querySingle(
         "SELECT EXISTS(SELECT comment FROM notes WHERE title = '$title');"
@@ -95,8 +95,8 @@ if (! extension_loaded('sqlite3')) {
     case "readNote":
       readNote();
       break;
-    case "saveNote":
-      saveNote();
+    case "createNote":
+      createNote();
       break;
     case "modifyNote":
       modifyNote();
@@ -104,7 +104,7 @@ if (! extension_loaded('sqlite3')) {
     case "deleteNote":
       deleteNote();
       break;
-    case "*":
+    default:
       $messageType = "alert-warning";
       $message = "act not understood : $action";
 }
@@ -138,7 +138,6 @@ if($raw_comment == "") {
 }
 
   // List notes in db :
-  $noteList = array();
   $notes = $db->query("SELECT title FROM notes;");
   if ($notes) {
     while ($note = $notes->fetchArray()) {

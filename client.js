@@ -22,56 +22,49 @@ if (!title) { title = ""; }
 function readNote() {
   let titleSpan = document.getElementById("titleSpan");
   engine("readNote", function(event) {
-    reload(event);
+    reloadReadView(event);
     if (title != "") {
       titleSpan.innerHTML = "<h4> > " + title + "</h4>";
     } else {
       titleSpan.innerHTML = "";
     }
-    messageUser(message, messageType);
   });
 }
 
-function saveNote() {
-  engine("saveNote", reload);
+function createNote() {
+  engine("createNote", reloadReadView);
 }
 
 function modifyNote() {
-  engine("modifyNote", reload);
+  engine("modifyNote", reloadReadView);
 }
 
 function deleteNote() {
   engine("deleteNote", function(event) {
-    messageUser(message, messageType);
     title = "";
     titleField.value = "";
     readNote();
   });
 }
 
-function newNote() {
-  editView();
-  var saveButton = document.getElementById("leftButton");
-  var titleField = document.getElementById("titleField");
-
-  saveButton.removeEventListener('click', saveNote);
-  saveButton.addEventListener('click', saveNote);
-  //titleField.style.display = "block";
-  titleField.type = "input";
-  titleField.placeholder = "Nouvelle note";
-}
-
-function reload(event) {
+function reloadReadView(event) {
   readView();
   populateMenu();
   let commentDiv = document.getElementById("commentSections");
   commentDiv.innerHTML = comment;
   commentField.textContent = raw_comment;
-  if (comment == "") {
-    messageUser(message, messageType);
-  }
 }
 
+function editNewNoteView() {
+  editView();
+  var saveButton = document.getElementById("leftButton");
+  var titleField = document.getElementById("titleField");
+
+  saveButton.removeEventListener('click', modifyNote);
+  saveButton.addEventListener('click', createNote);
+  titleField.type = "input";
+  titleField.placeholder = "Nouvelle note";
+}
 
 function editView() {
   var editor = document.getElementById("editor");
@@ -80,7 +73,6 @@ function editView() {
   var commentField = document.getElementById("commentField");
 
   comments.style.display = "none";
-  //titleField.style.display = "none";
   titleField.type = "hidden";
   commentField.style.display = "block";
   editor.style.display = "block";
@@ -90,8 +82,8 @@ function editView() {
 
   var saveButton = document.getElementById("leftButton");
   saveButton.textContent = "Enregistrer";
-  saveButton.removeEventListener('click', newNote);
-  saveButton.addEventListener('click', saveNote);
+  saveButton.removeEventListener('click', createNote);
+  saveButton.addEventListener('click', modifyNote);
 
   var modToggle = document.getElementById("leftMostButton");
   modToggle.textContent = "Annuler";
@@ -103,6 +95,7 @@ function editView() {
 function readView() {
   var editor = document.getElementById("editor");
   var comments = document.getElementById("comments");
+  var titleField = document.getElementById("titleField");
 
   comments.style.display = "block";
   editor.style.display = "none";
@@ -110,7 +103,7 @@ function readView() {
   var newNoteButton = document.getElementById("leftMostButton");
   newNoteButton.textContent = "Nouvelle note";
   newNoteButton.removeEventListener('click', readView);
-  newNoteButton.addEventListener('click', newNote);
+  newNoteButton.addEventListener('click', editNewNoteView);
   if (title) {
     newNoteButton.style.display = "none";
   } else {
@@ -119,7 +112,7 @@ function readView() {
 
   var modToggle = document.getElementById("leftButton");
   modToggle.textContent = "Modifier";
-  modToggle.removeEventListener('click', saveNote);
+  modToggle.removeEventListener('click', createNote);
   modToggle.addEventListener('click', editView);
 }
 
@@ -138,11 +131,14 @@ function engine(action, callback) {
     notes = answer.notes;
     message = answer.message;
     messageType = answer.messageType;
+    if (message != undefined) {
+      messageUser("success : " + answer.message, answer.messageType);
+    }
     callback(event);
   });
   XHR.addEventListener("error", function(event) {
     var answer = JSON.parse(event.target.responseText);
-    messageUser(answer.message, answer.messageType);
+    messageUser("failed : " + answer.message, answer.messageType);
   });
 
   XHR.open("POST", "engine.php");
