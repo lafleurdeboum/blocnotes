@@ -13,6 +13,7 @@ for (var i=0; i<args.length; ++i) {
 var title = $_GET["title"];
 var comment;
 var notes = new Array();
+var documents = new Array();
 var message;
 var messageType;
 
@@ -50,6 +51,7 @@ function deleteNote() {
 function reloadReadView(event) {
   readView();
   populateMenu();
+  populateDocuments();
   let commentDiv = document.getElementById("commentSections");
   commentDiv.innerHTML = comment;
   commentField.textContent = raw_comment;
@@ -129,6 +131,7 @@ function engine(action, callback) {
     comment = answer.comment;
     raw_comment = answer.raw_comment;
     notes = answer.notes;
+    documents = answer.documents;
     message = answer.message;
     messageType = answer.messageType;
     if (message != undefined) {
@@ -170,6 +173,40 @@ function populateMenu() {
   notes.forEach((note) => {
     let link = document.createElement("li");
     link.innerHTML = "<a href='?title=" + note + "'>" + note + "</a>";
+    link.classList.add("nav-item");
+    menu.appendChild(link);
+  });
+}
+function populateDocuments() {
+  let menu = document.getElementById("documentList");
+  menu.innerHTML = "";
+  documents.forEach((fileinfo) => {
+    let newMedia = null;
+    let link = document.createElement("li");
+    //link.innerHTML = "<object data='documents/" + fileinfo.filename + "'>";
+    //link.innerHTML = "<object data='documents/" + fileinfo.filename + "' type='" + fileinfo.filetype + "' width='100px' height='100px' allowAutoplay='false' />";
+    let mediatype = fileinfo.filetype.split('/')[0];
+    switch(mediatype) {
+      case 'audio':
+      case 'video':
+            console.log(fileinfo);
+        //newMedia = document.createElement("video");
+        //newMedia.src = "documents/" + fileinfo.filename;
+        newMedia = "<video controls src='documents/" + fileinfo.filename + "' width=100 height=100 />";
+        link.innerHTML = newMedia;
+        break;
+      case 'image':
+        newMedia = new Image();
+        //newMedia = document.createElement("image");
+        newMedia.onload = function() {
+          link.appendChild(newMedia);
+        }
+        newMedia.src = "documents/" + fileinfo.filename;
+        newMedia.width = '100';
+        newMedia.height = '100';
+        break;
+    }
+      //menu.appendChild(newMedia);
     link.classList.add("nav-item");
     menu.appendChild(link);
   });

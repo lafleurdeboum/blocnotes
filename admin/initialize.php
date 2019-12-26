@@ -26,6 +26,7 @@
     $db->exec(
       "CREATE TABLE IF NOT EXISTS documents (
         filename STRING,
+        filetype STRING,
         attached_notes STRING,
         UNIQUE(filename) )"
     );
@@ -39,13 +40,13 @@
     );
     echo "added default entry<br />\n";
 
-    ## insert comment holders for each and every file - not necessary anymore ;
-    ## post_comment.php creates the entry if necessary
+    ## populate files table :
 
     $files = array_diff(scandir($documentsFolder), array('.', '..'));
     foreach ($files as $file) {
+      $type = mime_content_type("documents/" . $file);
       $db->exec(
-        "INSERT OR IGNORE INTO documents (filename, attached_notes) VALUES ('$file', '')"
+        "INSERT OR IGNORE INTO documents (filename, filetype, attached_notes) VALUES ('$file', '$type', '')"
       );
     };
 

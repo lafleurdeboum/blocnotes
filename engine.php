@@ -28,11 +28,15 @@ if (! extension_loaded('sqlite3')) {
     $raw_comment = $db->querySingle(
         "SELECT comment FROM notes WHERE title = '$title';"
     );
+    // List attached documents
     $documentQuery = $db->query(
-        "SELECT filename FROM documents WHERE '$title' LIKE attached_notes;"
+        "SELECT filename, filetype FROM documents WHERE attached_notes LIKE '%$title%';"
     );
     while ($document = $documentQuery->fetchArray()) {
-        array_push($documents, $document['filename']);
+      array_push($documents, array(
+          'filename' => $document['filename'],
+          'filetype' => $document['filetype']
+      ));
     }
   }
   
