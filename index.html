@@ -12,13 +12,12 @@
   <link rel="stylesheet" href="css/bootstrap.min.css" />
   <link rel="stylesheet" type="text/css" href="css/dropzone.css" />
   <link rel="stylesheet" type="text/css" href="css/style.css" />
-  <script src="client.js" type="text/javascript"></script>
   <script src="dropzone.js" type="text/javascript"></script>
 
 </head>
 <body>
   
-  <nav class="navbar navbar-dark bg-dark">
+  <nav class="navbar navbar-dark bg-dark" id="nav">
 
     <span class="">
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
@@ -30,7 +29,9 @@
 
       <span id="titleSpan"></span>
 
-      <button type='button' id='leftMostButton' class='btn btn-secondary'>nouvelle note</button>
+      <button type='button' id='leftMostButton' class='btn btn-secondary'>
+          + <!-- New -->
+      </button>
     </span>
 
       <span class="">
@@ -39,7 +40,7 @@
     </span>
 
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-      <ul class="navbar-nav nav" id="menuList">
+      <ul class="navbar-nav nav notes-nav">
       </ul>
     </div>
 
@@ -47,26 +48,37 @@
 
   <div id="main" class="container">
 
-    <div id="comments" class="container" style="display: none;">
-      <div id="commentSections">
+    <div id="noteReader" class="container" style="display: none;">
+      <form action="engine/readNote.php" class="read" method="POST">
+        <input name="title" type="hidden" />
+      </form>
+      <form action="engine/deleteNote.php" class="delete" method="POST">
+        <input name="title" type="hidden" />
+      </form>
+
+      <div class="contentHolder">
       </div>
-      <ul class="nav" id="documentList"></ul>
+      <ul class="nav docs-nav"></ul>
     </div>
 
-    <div id="editor" class="container" style="display: none;">
-      <form id='editorForm' method="POST">
-        <input id="titleField" name="title" value="" type="hidden" />
-        <input id="actField" name="act" value="" type="hidden" />
-
-        <textarea id="commentField" name="raw_comment"></textarea>
+    <div id="noteEditor" class="container" style="display: none;">
+      <form action="engine/modifyNote.php" class="modify" method="POST">
+        <input name="title" type="hidden" />
+        <textarea name="raw_comment"></textarea>
       </form>
-      <ul class="nav" id="documentDelList"></ul>
-      <form id="documentForm" action="engine.php" class="dropzone" method="POST">
-          <input name="act" value="addDocument" type="hidden" />
+      <form action="engine/createNote.php" class="create" method="POST">
+        <input name="title" type="hidden" />
+      </form>
+
+      <ul class="nav docs-nav"></ul>
+      <form action="engine/addDocument.php" class="dropzone" method="POST">
+        <input name="title" type="hidden" />
       </form>
     </div>
 
   </div> <!-- #main -->
+
+  <script src="client.js"></script>
 
   <!-- Optional JavaScript : -->
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
