@@ -48,26 +48,6 @@ function deleteNote() {
   });
 }
 
-function reloadReadView(event) {
-  readView();
-  populateMenu();
-  populateDocuments();
-  let commentDiv = document.getElementById("commentSections");
-  commentDiv.innerHTML = comment;
-  commentField.textContent = raw_comment;
-}
-
-function editNewNoteView() {
-  editView();
-  var saveButton = document.getElementById("leftButton");
-  var titleField = document.getElementById("titleField");
-
-  saveButton.removeEventListener('click', modifyNote);
-  saveButton.addEventListener('click', createNote);
-  titleField.type = "input";
-  titleField.placeholder = "Nouvelle note";
-}
-
 function editView() {
   var editor = document.getElementById("editor");
   var comments = document.getElementById("comments");
@@ -94,6 +74,17 @@ function editView() {
   modToggle.addEventListener('click', readView);
 }
 
+function editNewNoteView() {
+  editView();
+  var saveButton = document.getElementById("leftButton");
+  var titleField = document.getElementById("titleField");
+
+  saveButton.removeEventListener('click', modifyNote);
+  saveButton.addEventListener('click', createNote);
+  titleField.type = "input";
+  titleField.placeholder = "Nouvelle note";
+}
+
 function readView() {
   var editor = document.getElementById("editor");
   var comments = document.getElementById("comments");
@@ -116,6 +107,18 @@ function readView() {
   modToggle.textContent = "Modifier";
   modToggle.removeEventListener('click', createNote);
   modToggle.addEventListener('click', editView);
+}
+
+function reloadReadView(event) {
+  readView();
+  populateMenu();
+  let documentList = document.getElementById("documentList");
+  populateDocumentList(documentList);
+  let dicumentDelList = document.getElementById("documentDelList");
+  populateDocumentList(documentDelList);
+  let commentDiv = document.getElementById("commentSections");
+  commentDiv.innerHTML = comment;
+  commentField.textContent = raw_comment;
 }
 
 
@@ -177,9 +180,9 @@ function populateMenu() {
     menu.appendChild(link);
   });
 }
-function populateDocuments() {
-  let menu = document.getElementById("documentList");
-  menu.innerHTML = "";
+function populateDocumentList(ul) {
+  //let ul = document.getElementById("documentList");
+  ul.innerHTML = "";
   documents.forEach((fileinfo) => {
     let newMedia = null;
     let link = document.createElement("li");
@@ -189,7 +192,6 @@ function populateDocuments() {
     switch(mediatype) {
       case 'audio':
       case 'video':
-            console.log(fileinfo);
         //newMedia = document.createElement("video");
         //newMedia.src = "documents/" + fileinfo.filename;
         newMedia = "<video controls src='documents/" + fileinfo.filename + "' width=100 height=100 />";
@@ -206,9 +208,9 @@ function populateDocuments() {
         newMedia.height = '100';
         break;
     }
-      //menu.appendChild(newMedia);
+      //ul.appendChild(newMedia);
     link.classList.add("nav-item");
-    menu.appendChild(link);
+    ul.appendChild(link);
   });
 }
 

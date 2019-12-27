@@ -9,6 +9,7 @@ $title = $_POST["title"] ?: "";
 $raw_comment = $_POST["raw_comment"] ?: "";
 $comment = "";
 $noteList = array();
+$pool = "documents";
 $documents = array();
 $message = null;
 $messageType = null;
@@ -100,6 +101,27 @@ if (! extension_loaded('sqlite3')) {
     }
   }
 
+  function addDocument() {
+    global $db, $title, $pool, $message, $messageType, $_FILES;
+    //$uploadFile = basename($_FILES['userfile']['name']);
+    $uploadFile = basename($_FILES['file']['name']);
+
+    //if (move_uploaded_file($_FILES['userfile']['tmp_name'], $pool . $uploadFile)) {
+    if (move_uploaded_file($_FILES['file']['tmp_name'], $pool . $uploadFile)) {
+      $messageType = "alert-success";
+      $message = "Fichier <b>$uploadFile</b> ajouté à $pool";
+      $type = mime_content_type($pool . $uploadFile);
+      $result = $db->exec(
+          "INSERT OR IGNORE INTO documents (filename, filetype, attached_notes) VALUES ('$uploadFile', '$type', '$title';"
+      );
+      if (!$result) { $message .= " - non enregistré dans la DB"; }
+    } else {
+      $returnQuery["alert_type"] = "alert-warning";
+      $returnQuery["alert"] = "Le fichier <b>" . $uploadFile;
+      $returnQuery["alert"] .= "</b> n'a pas pu être ajouté.
+          Vérifiez les permissions sur le dossier.";
+    }
+  }
 
   switch($action) {
     case "readNote":
@@ -113,6 +135,9 @@ if (! extension_loaded('sqlite3')) {
       break;
     case "deleteNote":
       deleteNote();
+      break;
+    case "addDocument":
+      addDocument();
       break;
     default:
       $messageType = "alert-warning";

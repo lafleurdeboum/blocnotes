@@ -10,8 +10,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
   <link rel="stylesheet" href="css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="css/dropzone.css" />
   <link rel="stylesheet" type="text/css" href="css/style.css" />
   <script src="client.js" type="text/javascript"></script>
+  <script src="dropzone.js" type="text/javascript"></script>
 
 </head>
 <body>
@@ -53,13 +55,18 @@
 
     <div id="editor" class="container" style="display: none;">
       <form id='editorForm' method="POST">
-        <input id="titleField" name="title" value="" type="hidden"/>
-        <input id="actField" name="act" value="" type="hidden"/>
+        <input id="titleField" name="title" value="" type="hidden" />
+        <input id="actField" name="act" value="" type="hidden" />
 
         <textarea id="commentField" name="raw_comment"></textarea>
       </form>
+      <ul class="nav" id="documentDelList"></ul>
+      <form id="documentForm" action="engine.php" class="dropzone" method="POST">
+          <input name="act" value="addDocument" type="hidden" />
+      </form>
     </div>
-  </div>
+
+  </div> <!-- #main -->
 
   <!-- Optional JavaScript : -->
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
