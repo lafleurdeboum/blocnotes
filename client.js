@@ -24,7 +24,7 @@ function query_engine(form, callback) {
 }
 
 function populateMenu(notes) {
-    var notesMenu = nav.querySelector("ul.notes-nav");
+    var notesMenu = document.querySelector("ul.notes-nav");
     notesMenu.innerHTML = "";
     notes.forEach(function(note) {
         var link = document.createElement("li");
