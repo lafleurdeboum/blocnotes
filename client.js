@@ -24,49 +24,49 @@ function query_engine(form, callback) {
 }
 
 function populateMenu(notes) {
-  let menu = nav.querySelector("ul.notes-nav");
-  menu.innerHTML = "";
-  notes.forEach((note) => {
-    let link = document.createElement("li");
-    link.innerHTML = "<a href='?title=" + note + "'>" + note + "</a>";
-    link.classList.add("nav-item");
-    menu.appendChild(link);
-  });
+    var notesMenu = nav.querySelector("ul.notes-nav");
+    notesMenu.innerHTML = "";
+    notes.forEach(function(note) {
+        var link = document.createElement("li");
+        link.innerHTML = "<a href='?title=" + note + "'>" + note + "</a>";
+        link.classList.add("nav-item");
+        notesMenu.appendChild(link);
+    });
 }
 
 function populateDocumentList(documents) {
-  //let ul = document.getElementById("documentList");
-  let ul = noteReader.querySelector("ul.docs-nav");
-  ul.innerHTML = "";
-  documents.forEach((fileinfo) => {
-    let newMedia = null;
-    let link = document.createElement("li");
-    let mediatype = fileinfo.filetype.split('/')[0];
-    switch(mediatype) {
-      case 'audio':
-      case 'video':
-        newMedia = "<video controls src='documents/" + fileinfo.filename + "' width=100 height=100 />";
-        link.innerHTML = newMedia;
-        break;
-      case 'image':
-        newMedia = new Image();
-        newMedia.onload = function() {
-          link.appendChild(newMedia);
+    //var ul = document.getElementById("documentList");
+    var ul = noteReader.querySelector("ul.docs-nav");
+    ul.innerHTML = "";
+    documents.forEach(function(fileinfo) {
+        var newMedia = null;
+        var link = document.createElement("li");
+        var mediatype = fileinfo.filetype.split('/')[0];
+        switch(mediatype) {
+            case 'audio':
+            case 'video':
+                newMedia = "<video controls src='documents/" + fileinfo.filename + "' width=100 height=100 />";
+                link.innerHTML = newMedia;
+                break;
+            case 'image':
+                newMedia = new Image();
+                newMedia.onload = function() {
+                    link.appendChild(newMedia);
+                }
+                newMedia.width = '100';
+                newMedia.height = '100';
+                newMedia.src = "documents/" + fileinfo.filename;
+                break;
         }
-        newMedia.width = '100';
-        newMedia.height = '100';
-        newMedia.src = "documents/" + fileinfo.filename;
-        break;
-    }
-    link.classList.add("nav-item");
-    ul.appendChild(link);
-  });
+        link.classList.add("nav-item");
+        ul.appendChild(link);
+    });
 }
 
 function messageUser(message, messageType) {
     if (message) {
-        let mainWindow = document.getElementById("main");
-        let messageDiv = document.createElement("div");
+        var mainWindow = document.getElementById("main");
+        var messageDiv = document.createElement("div");
 
         messageDiv.innerHTML = message;
         messageDiv.classList.add("alert",
@@ -75,9 +75,10 @@ function messageUser(message, messageType) {
                                  "fade",
                                  "show");
         messageDiv.role = "alert"; // TODO check this attribute
-        mainWindow.prepend(messageDiv);
+        nav.appendChild(messageDiv);
+        //mainWindow.prepend(messageDiv); // DEBUG fails on older browsers
         setTimeout(function() {
-            mainWindow.removeChild(messageDiv);
+            nav.removeChild(messageDiv);
         }, 3000);
         console.log(message);
     }
@@ -85,10 +86,10 @@ function messageUser(message, messageType) {
 
 function readNote(note) {
     // TODO Move some to an initialize function to be used in general.
-    let readForm = noteReader.querySelector("form.read");
-    let contentHolder = noteReader.querySelector("div.contentHolder");
-    let uploadForm = noteEditor.querySelector("form.dropzone");
-    let contentField = noteEditor.querySelector("textarea");
+    var readForm = noteReader.querySelector("form.read");
+    var contentHolder = noteReader.querySelector("div.contentHolder");
+    var uploadForm = noteEditor.querySelector("form.dropzone");
+    var contentField = noteEditor.querySelector("textarea");
 
     readForm.title.value = note.title;
     uploadForm.title.value = note.title;
@@ -103,7 +104,7 @@ function readNote(note) {
     leftButton.textContent = "o"; // Modify
     leftButton.onclick = function(event) {
         noteReader.style.display = "none";
-        editeNote(note);
+        editNote(note);
     }
     leftMostButton.onclick = function(event) {
         noteReader.style.display = "none";
@@ -121,7 +122,7 @@ function readNote(note) {
 }
 
 function deleteNote(note) {
-    let deleteForm = noteReader.querySelector("form.delete");
+    var deleteForm = noteReader.querySelector("form.delete");
 
     deleteForm.title.value = note.title;
     query_engine(deleteForm, function(answer) {
@@ -131,9 +132,9 @@ function deleteNote(note) {
 
 function createNote(note) {
     // There's a "form.create" but we'll just tweak a form.modify form.
-    let createForm = noteEditor.querySelector("form.modify");
+    var createForm = noteEditor.querySelector("form.modify");
 
-    editeNote("Nouvelle note");
+    editNote("Nouvelle note");
     createForm.title.type = "input";
     createForm.action = "engine/createNote.php";
     rightButton.onclick = function(event) {
@@ -146,7 +147,7 @@ function createNote(note) {
 }
 
 function editNote(note) {
-    let editForm = noteEditor.querySelector("form.modify");
+    var editForm = noteEditor.querySelector("form.modify");
 
     editForm.title.value = note.title;
     leftButton.textContent = "<"; // Cancel
@@ -166,7 +167,7 @@ function editNote(note) {
 
 document.addEventListener("DOMContentLoaded", function(event) {
     title = $_GET['title'] || "";
-    let readForm = noteReader.querySelector("form.read");
+    var readForm = noteReader.querySelector("form.read");
     readForm.title.value = title;
     query_engine(readForm, readNote);
 });
