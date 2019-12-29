@@ -96,12 +96,12 @@ function readNote(note) {
     contentHolder.innerHTML = note.comment;
     contentField.textContent = note.raw_comment;
 
-    rightButton.textContent = "x"; // Delete
+    rightButton.textContent = "Supprimer"; // Delete
     rightButton.onclick = function(event) {
         noteReader.style.display = "none";
         deleteNote(note);
     }
-    leftButton.textContent = "o"; // Modify
+    leftButton.textContent = "Modifier"; // Modify
     leftButton.onclick = function(event) {
         noteReader.style.display = "none";
         editNote(note);
@@ -150,12 +150,12 @@ function editNote(note) {
     var editForm = noteEditor.querySelector("form.modify");
 
     editForm.title.value = note.title;
-    leftButton.textContent = "<"; // Cancel
+    leftButton.textContent = "Annuler"; // Cancel
     leftButton.onclick = function(event) {
         noteEditor.style.display = "none";
         readNote(note);
     }
-    rightButton.textContent = ">"; // Save
+    rightButton.textContent = "Enregistrer"; // Save
     rightButton.onclick = function(event) {
         query_engine(editForm, function(answer) {
             noteEditor.style.display = "none";
