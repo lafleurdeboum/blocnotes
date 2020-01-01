@@ -18,11 +18,11 @@ body {
   box-sizing: border-box;
   margin: 0;
 }
+nav {
+  flex-wrap: nowrap;
+}
 nav > span {
   display: flex;
-}
-nav form {
-  display: inline;
 }
 .navbar-nav {
   display: block;
@@ -32,7 +32,12 @@ nav form {
 .navbar-dark .navbar-nav .nav-link {
   color: rgba(255, 255, 255, 0.8);
 }
-
+.notes-nav {
+  justify-content: start;
+}
+.notes-nav .nav-item {
+  padding: 0 1em;
+}
 
 #main {
   padding: 1em;
@@ -44,6 +49,9 @@ form.modifyNote textarea {
 form.dropzone {
   width: 100%;
   height: 16vh;
+}
+div.docs-nav {
+  justify-content: flex-start;
 }
 #noteReader .contentHolder {
   display: flex;

@@ -15,7 +15,13 @@ function query_engine(form, callback) {
     
     XHR.addEventListener("load", function(event) {
         const answer = JSON.parse(event.target.responseText);
-        messageUser(answer.message, answer.messageType);
+        if (answer.message) {
+            if (answer.messageType) {
+                messageUser(answer.message, answer.messageType);
+            } else {
+                messageUser(answer.message, "alert-success");
+            }
+        }
         callback(answer);
     });
 
@@ -24,22 +30,27 @@ function query_engine(form, callback) {
 }
 
 function populateMenu(notes) {
-    var notesMenu = document.querySelector(".notes-nav");
-    //notesMenu.innerHTML = "";
-    notes.forEach(function(note) {
-        var link = document.createElement("li");
-        link.innerHTML = "<a href='?title=" + note + "'>" + note + "</a>";
-        link.classList.add("nav-item");
-        notesMenu.appendChild(link);
-    });
+    var noteMenus = document.querySelectorAll(".notes-nav");
+    for(var i=0; i < noteMenus.length; i++) {
+        var noteMenu = noteMenus[i];
+        console.log(noteMenu);
+        noteMenu.innerHTML = "";
+        notes.forEach(function(note) {
+            if(note != "") {
+                var link = document.createElement("span");
+                link.innerHTML = "<a href='?title=" + note + "'>" + note + "</a>";
+                link.classList.add("nav-item");
+                noteMenu.appendChild(link);
+            }
+        });
+    }
 }
 
 function populateDocumentList(documents) {
     var docDivs = document.querySelectorAll(".docs-nav");
-    console.log("nombre de nav de docs : " + docDivs.length);
-    //docDivs.foreach(function(docDivs[i]) {
     for(var i=0; i < docDivs.length; i++) {
-        docDivs[i].innerHTML = "";
+        var docDiv = docDivs[i];
+        docDiv.innerHTML = "";
         documents.forEach(function(fileinfo) {
             var newMedia = null;
             var link = document.createElement("span");
@@ -60,6 +71,26 @@ function populateDocumentList(documents) {
                     newMedia.src = "documents/" + fileinfo.filename;
                     break;
             }
+            if(docDiv.classList.contains("editable")) {
+                var editDocListForm = document.createElement("form");
+                //editDocListForm.action = "engine/note/detachDocument.php";
+                editDocListForm.action = "engine/document/delete.php";
+                editDocListForm.method = "post";
+                editDocListForm.classList.add("deleteDocument");
+                var filenameInput = document.createElement("input");
+                filenameInput.name = "filename";
+                filenameInput.value = fileinfo.filename;
+                filenameInput.type = "hidden";
+                editDocListForm.appendChild(filenameInput);
+                var submitButton = document.createElement("button");
+                submitButton.onclick = function(event) {
+                    query_engine(editDocListForm, function(answer) {
+                        populateDocumentList(answer.documents);
+                    });
+                };
+                link.appendChild(editDocListForm);
+                link.appendChild(submitButton);
+            }
             link.classList.add("nav-item");
             docDivs[i].appendChild(link);
         });
@@ -67,24 +98,23 @@ function populateDocumentList(documents) {
 }
 
 function messageUser(message, messageType) {
-    if (message) {
-        var mainWindow = document.getElementById("main");
-        var messageDiv = document.createElement("div");
+    //var mainWindow = document.getElementById("main");
+    var navStart = nav.querySelector("span");
+    var messageDiv = document.createElement("div");
 
-        messageDiv.innerHTML = message;
-        messageDiv.classList.add("alert",
-                                 messageType,
-                                 "alert-dismissible",
-                                 "fade",
-                                 "show");
-        messageDiv.role = "alert"; // TODO check this attribute
-        nav.appendChild(messageDiv);
-        //mainWindow.prepend(messageDiv); // DEBUG fails on older browsers
-        setTimeout(function() {
-            nav.removeChild(messageDiv);
-        }, 3000);
-        console.log(message);
-    }
+    messageDiv.innerHTML = message;
+    messageDiv.classList.add("alert",
+                             messageType,
+                             "alert-dismissible",
+                             "fade",
+                             "show");
+    messageDiv.role = "alert"; // TODO check this attribute
+    navStart.appendChild(messageDiv);
+    //mainWindow.prepend(messageDiv); // DEBUG fails on older browsers
+    setTimeout(function() {
+        navStart.removeChild(messageDiv);
+    }, 3000);
+    console.log(messageType + " : " + message);
 }
 
 function readNote(note) {
@@ -119,8 +149,12 @@ function readNote(note) {
         leftMostButton.style.display = "none";
     }
 
-    populateDocumentList(note.documents);
-    populateMenu(note.notes);
+    if (note.documents) {
+        populateDocumentList(note.documents);
+    }
+    if (note.notes) {
+        populateMenu(note.notes);
+    }
     noteReader.style.display = "initial";
 }
 
@@ -135,11 +169,13 @@ function deleteNote(note) {
 
 function createNote(note) {
     // There's a "form.create" but we'll just tweak a form.modify form.
+    editNote(note);
     var createForm = noteEditor.querySelector("form.modifyNote");
 
-    editNote("Nouvelle note");
     createForm.title.type = "input";
-    createForm.action = "engine/createNote.php";
+    createForm.title.value = note.title;
+    createForm.action = "engine/note/create.php";
+    rightButton.textContent = "Créer"; // Create
     rightButton.onclick = function(event) {
         query_engine(createForm, function(answer) {
             createForm.title.type = "hidden";
@@ -147,6 +183,7 @@ function createNote(note) {
             readNote(answer);
         });
     }
+    console.log(rightButton);
 }
 
 function editNote(note) {

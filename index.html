@@ -42,8 +42,8 @@
     </span>
 
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-      <ul class="navbar-nav nav notes-nav">
-      </ul>
+      <div class="navbar notes-nav">
+      </div>
     </div>
 
   </nav>
@@ -61,7 +61,8 @@
 
       <div class="contentHolder">
       </div>
-      <ul class="nav docs-nav"></ul>
+        <div class="navbar docs-nav">
+        </div>
     </div>
 
     <div id="noteEditor" class="container" style="display: none;">
@@ -74,14 +75,8 @@
         <input name="title" type="hidden" />
       </form>
 
-      <div class="nav"> <!-- TODO make images deletable -->
-        <div class="navbar-menu">
-          <div class="navbar-start docs-nav">
-          </div>
-          <div class="navbar-end">
-          </div>
+        <div class="navbar docs-nav editable">
         </div>
-      </div>
 
       <form action="engine/document/upload.php" class="dropzone" method="POST">
         <input name="title" type="hidden" />
