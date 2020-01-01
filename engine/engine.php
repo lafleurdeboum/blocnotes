@@ -5,23 +5,23 @@ use Michelf\Markdown;
 
 $db = null;
 $dbFile = "admin/notes.db";
+// Presume both db and engine commands live in "$ProgramRoot/engine" :
+$workDir = preg_split("#/engine/#", getcwd())[0];
+// Presume documents upload dir location :
+$pool = "$workDir/documents";
+
 $title = $_POST["title"] ?: "";
 $raw_comment = $_POST["raw_comment"] ?: "";
 $comment = "";
 $noteList = array();
-$pool = "documents";
 $documents = array();
 $message = null;
 $messageType = null;
-
 $returnObject = array();
-$referer = parse_url($_SERVER['HTTP_REFERER']);
 
 
 function load_db() {
-  global $db, $dbFile, $message, $messageType;
-  // Assume both db and engine commands live in ProgramRoot/ subdirectories :
-  $workDir = preg_split("#/engine/#", getcwd())[0];
+  global $db, $dbFile, $workDir, $message, $messageType;
 
   if (! extension_loaded('sqlite3')) {
     $messageType = "alert-warning";
@@ -74,9 +74,15 @@ function get_note_list() {
 
 function get_document_list() {
   global $db, $title, $documents;
-  $documentQuery = $db->query(
-      "SELECT filename, filetype FROM documents WHERE instr(attached_notes, '$title');"
-  );
+  if($title == "") {
+    $documentQuery = $db->query(
+        "SELECT filename, filetype FROM documents WHERE attached_notes = '';"
+    );
+  } else {
+    $documentQuery = $db->query(
+        "SELECT filename, filetype FROM documents WHERE instr(attached_notes, '$title');"
+    );
+  }
   while ($document = $documentQuery->fetchArray()) {
     array_push($documents, array(
         'filename' => $document['filename'],
@@ -88,16 +94,20 @@ function get_document_list() {
 function return_answer() {
   global $title, $comment, $raw_comment, $documents, $message, $messageType, $noteList;
 
+  // Always return a title and comment ; optionaly return a message and a list of nodes and documents.
+
   $returnObject["title"] = $title;
   $returnObject["raw_comment"] = $raw_comment;
   $returnObject["comment"] = $comment;
-  $returnObject["documents"] = $documents;
   if ($message) {
     $returnObject["message"] = $message;
     $returnObject["messageType"] = $messageType;
   }
   if ($noteList) {
     $returnObject["notes"] = $noteList;
+  }
+  if ($documents) {
+    $returnObject["documents"] = $documents;
   }
 
   echo json_encode($returnObject);
