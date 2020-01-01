@@ -51,10 +51,11 @@
   <div id="main" class="container">
 
     <div id="noteReader" class="container" style="display: none;">
-      <form action="engine/readNote.php" class="read" method="POST">
+
+      <form action="engine/note/read.php" class="readNote" method="POST">
         <input name="title" type="hidden" />
       </form>
-      <form action="engine/deleteNote.php" class="delete" method="POST">
+      <form action="engine/note/delete.php" class="deleteNote" method="POST">
         <input name="title" type="hidden" />
       </form>
 
@@ -64,16 +65,25 @@
     </div>
 
     <div id="noteEditor" class="container" style="display: none;">
-      <form action="engine/modifyNote.php" class="modify" method="POST">
+
+      <form action="engine/note/modify.php" class="modifyNote" method="POST">
         <input name="title" type="hidden" />
         <textarea name="raw_comment"></textarea>
       </form>
-      <form action="engine/createNote.php" class="create" method="POST">
+      <form action="engine/note/create.php" class="createNote" method="POST">
         <input name="title" type="hidden" />
       </form>
 
-      <ul class="nav docs-nav"></ul>
-      <form action="engine/addDocument.php" class="dropzone" method="POST">
+      <div class="nav"> <!-- TODO make images deletable -->
+        <div class="navbar-menu">
+          <div class="navbar-start docs-nav">
+          </div>
+          <div class="navbar-end">
+          </div>
+        </div>
+      </div>
+
+      <form action="engine/document/upload.php" class="dropzone" method="POST">
         <input name="title" type="hidden" />
       </form>
     </div>

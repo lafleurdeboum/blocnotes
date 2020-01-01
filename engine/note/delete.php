@@ -2,8 +2,6 @@
 
 require_once 'engine.php';
 
-global $db, $title, $raw_comment, $comment, $message, $messageType;
-
 load_db();
 
 $result = $db->exec("DELETE FROM notes WHERE title = '$title';");
@@ -16,5 +14,5 @@ if ($result) {
   $message = "La note <b>$title</b> n'a pas pu être supprimée";
 }
 
-require_once 'readNote.php';
+//require_once 'read.php';
 

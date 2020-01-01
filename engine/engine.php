@@ -17,13 +17,17 @@ $messageType = null;
 $returnObject = array();
 $referer = parse_url($_SERVER['HTTP_REFERER']);
 
+
 function load_db() {
   global $db, $dbFile, $message, $messageType;
+  // Assume both db and engine commands live in ProgramRoot/ subdirectories :
+  $workDir = preg_split("#/engine/#", getcwd())[0];
+
   if (! extension_loaded('sqlite3')) {
     $messageType = "alert-warning";
     $message = "Pas de support sqlite3 ! Pas d'Accès à la base de données <b>$dbFile</b>";
   } else {
-    $db = new SQLite3($dbFile);
+    $db = new SQLite3("$workDir/$dbFile");
   }
 }
 

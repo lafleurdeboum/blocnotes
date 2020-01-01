@@ -2,8 +2,6 @@
 
 require_once 'engine.php';
 
-global $db, $title, $pool, $message, $messageType, $_FILES;
-
 load_db();
 
 //$uploadFile = basename($_FILES['userfile']['name']);

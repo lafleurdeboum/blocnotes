@@ -2,8 +2,6 @@
 
 require_once "engine.php";
 
-global $db, $title, $raw_comment, $comment, $message, $messageType, $documents, $noteList;
-
 load_db();
 
 $article_exists = $db->querySingle(
