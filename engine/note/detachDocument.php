@@ -30,5 +30,7 @@ $tagged = $db->querySingle(
   "UPDATE documents SET attached_notes = '" . $newAttachedNotes . "' WHERE filename = '$filename';"
 );
 $message = "$filename detached from $title - now attached to $newAttachedNotes";
+
+// Do note return a whole note, the view should stay the same :
 return_answer();
 

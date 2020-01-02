@@ -14,5 +14,5 @@ if ($result) {
   $message = "La note <b>$title</b> n'a pas pu être supprimée";
 }
 
-//require_once 'read.php';
+require_once 'read.php';
 

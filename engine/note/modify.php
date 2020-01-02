@@ -24,9 +24,5 @@ if ($article_exists) {
   $message = "note $title non trouvée.";
 }
 
-get_comment();
-get_note_list();
-get_document_list();
-
-return_answer();
+require_once 'read.php';
 
