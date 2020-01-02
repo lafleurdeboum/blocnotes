@@ -18,6 +18,9 @@ body {
   box-sizing: border-box;
   margin: 0;
 }
+#titleSpan {
+    align-self: center;
+}
 nav {
   flex-wrap: nowrap;
 }

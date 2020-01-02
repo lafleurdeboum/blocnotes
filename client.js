@@ -46,6 +46,11 @@ function populateMenu(notes) {
     }
 }
 
+function displayTitle(title) {
+    var titleSpan = document.querySelector("#titleSpan");
+    titleSpan.innerHTML = title;
+}
+
 function populateDocumentList(documents) {
     var docDivs = document.querySelectorAll(".docs-nav");
     for(var i=0; i < docDivs.length; i++) {
@@ -120,12 +125,15 @@ function messageUser(message, messageType) {
 function readNote(note) {
     // TODO Move some to an initialize function to be used in general.
     var readForm = noteReader.querySelector("form.readNote");
-    var contentHolder = noteReader.querySelector("div.contentHolder");
     var uploadForm = noteEditor.querySelector("form.dropzone");
-    var contentField = noteEditor.querySelector("textarea");
+    var contentField = noteEditor.querySelector("form.modifyNote textarea");
+    var contentHolder = noteReader.querySelector("div.contentHolder");
 
     readForm.title.value = note.title;
     uploadForm.title.value = note.title;
+    if(note.title != "") {
+        displayTitle(": " + note.title);
+    }
     contentHolder.innerHTML = note.comment;
     contentField.textContent = note.raw_comment;
 
