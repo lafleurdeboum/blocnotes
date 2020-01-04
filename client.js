@@ -164,16 +164,22 @@ function readNote(note) {
     contentHolder.innerHTML = note.comment;
     contentField.textContent = note.raw_comment;
 
-    rightButton.textContent = "Supprimer"; // Delete
+    rightButton.innerHTML = feather.icons["edit"].toSvg();
     rightButton.onclick = function(event) {
-        noteReader.style.display = "none";
-        deleteNote(note);
-    }
-    leftButton.textContent = "Modifier"; // Modify
-    leftButton.onclick = function(event) {
         noteReader.style.display = "none";
         editNote(note);
     }
+    /*
+    leftButton.textContent = "Supprimer"; // Modify
+    leftButton.onclick = function(event) {
+        noteReader.style.display = "none";
+        deleteNote(note);
+    }
+    */
+    leftButton.style.display = "none";
+
+    //leftMostButton.innerHTML = feather.icons["file-plus"].toSvg();
+    leftMostButton.innerHTML = feather.icons["plus-square"].toSvg();
     leftMostButton.onclick = function(event) {
         noteReader.style.display = "none";
         createNote(note);
@@ -211,7 +217,8 @@ function createNote(note) {
     createForm.title.type = "input";
     createForm.title.value = note.title;
     createForm.action = "engine/note/create.php";
-    rightButton.textContent = "Créer"; // Create
+    //rightButton.textContent = "Créer"; // Create
+    rightButton.innerHTML = feather.icons["save"].toSvg();
     rightButton.onclick = function(event) {
         query_engine(createForm, function(answer) {
             createForm.title.type = "hidden";
@@ -219,19 +226,23 @@ function createNote(note) {
             readNote(answer);
         });
     }
-    console.log(rightButton);
+    leftButton.innerHTML = feather.icons["chevron-left"].toSvg();
+    leftButton.style.display = "initial";
 }
 
 function editNote(note) {
     var editForm = noteEditor.querySelector("form.modifyNote");
 
     editForm.title.value = note.title;
-    leftButton.textContent = "Annuler"; // Cancel
+    leftButton.innerHTML = feather.icons["chevron-left"].toSvg();
+    leftButton.style.display = "initial";
+    //leftButton.textContent = "Annuler"; // Cancel
     leftButton.onclick = function(event) {
         noteEditor.style.display = "none";
         readNote(note);
     }
-    rightButton.textContent = "Enregistrer"; // Save
+    //rightButton.textContent = "Enregistrer"; // Save
+    rightButton.innerHTML = feather.icons["save"].toSvg();
     rightButton.onclick = function(event) {
         query_engine(editForm, function(answer) {
             noteEditor.style.display = "none";
