@@ -4,7 +4,7 @@ require_once 'Markdown/Markdown.inc.php';
 use Michelf\Markdown;
 
 $db = null;
-$dbFile = "admin/notes.db";
+$dbFile = "admin/rara.db";
 // Presume both db and engine commands live in "$ProgramRoot/engine" :
 $workDir = preg_split("#/engine/#", getcwd())[0];
 // Presume documents upload dir location :
@@ -41,7 +41,6 @@ function get_comment() {
     $message = "note vide : <b>$title</b>";
   } else {
     $comment = Markdown::defaultTransform($raw_comment);
-    /*
     // Separate comment into sections around h2 headers :
   
     $commentList = explode("<h2>", $comment);
@@ -58,7 +57,6 @@ function get_comment() {
     $displayable = str_ireplace("<section><h2></section>", "", $displayable);
     $displayable = str_ireplace("<section></section>", "", $displayable);
     $comment = $displayable;
-     */
   }
 }
 
