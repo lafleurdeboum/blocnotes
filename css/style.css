@@ -10,7 +10,26 @@ pre {
 -webkit-media-controls-panel {
   max-width: 50px;
 }
-
+/*
+.document.audio {
+  background-image: url("../icons/audio.svg");
+  background-size: 2em;
+  background-repeat: no-repeat;
+  padding: 0.3em;
+}
+.document.video {
+  background: url("../icons/video.svg");
+}
+*/
+#player {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+path {
+  fill: white;
+}
 
 body {
   color: white;
@@ -58,11 +77,12 @@ div.docs-nav {
 }
 #noteReader .contentHolder {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-wrap: wrap;
+  /* Acts as a fallback : */
+  justify-content: space-around;
+  justify-content: space-evenly;
 }
 #noteReader .contentHolder section {
-  margin: auto;
   font-size: large;
 }
 

@@ -50,6 +50,16 @@ function displayTitle(title) {
     var titleSpan = document.querySelector("#titleSpan");
     titleSpan.innerHTML = title;
 }
+function Play(file) {
+    console.log(file);
+    player = document.querySelector("#player");
+    player.autoplay = true;
+    player.src = file;
+    player.style.display = "inline";
+    console.log(player);
+    //newMedia = "<audio controls src='" + file + "' width=100 height=100 />";
+    //container.innerHTML += newMedia;
+}
 
 function populateDocumentList(documents) {
     var docDivs = document.querySelectorAll(".docs-nav");
@@ -63,9 +73,26 @@ function populateDocumentList(documents) {
             switch(mediatype) {
                 case 'audio':
                 case 'video':
-                    newMedia = "<video controls src='documents/" + fileinfo.filename + "' width=100 height=100 />";
-                    link.innerHTML = newMedia;
+                    //newMedia = "<video controls src='documents/" + fileinfo.filename + "' width=100 height=100 />";
+                    //newMedia = "<a onclick=Play('documents/" + fileinfo.filename + "');><img src='icons/" + mediatype + ".svg' width=100 height=100 /></a>";
+                    newMedia = document.createElement("span");
+                    button = document.createElement("button");
+                    button.innerHTML = "<img src='icons/audio.svg'></img>" + fileinfo.filename;
+                    button.onclick = function() {
+                        Play('documents/' + fileinfo.filename);
+                    };
+                    button.classList.add("btn");
+                    button.classList.add("btn-secondary");
+                    newMedia.appendChild(button);
+                    //newMedia.innerHTML += fileinfo.filename;
+                    //link.innerHTML = newMedia;
+                    //newMedia.onload = () => { link.appendChild(newMedia); };
+                    link.appendChild(newMedia);
                     break;
+                case "image":
+                    newMedia = "<a href='documents/" + fileinfo.filename + "'><img src='documents/" + fileinfo.filename + "' width=100 height=100 /></a>";
+                    link.innerHTML = newMedia;
+                /*
                 case 'image':
                     newMedia = new Image();
                     newMedia.onload = function() {
@@ -75,6 +102,7 @@ function populateDocumentList(documents) {
                     newMedia.height = '100';
                     newMedia.src = "documents/" + fileinfo.filename;
                     break;
+                */
             }
             if(docDiv.classList.contains("editable")) {
                 var editDocListForm = document.createElement("form");
@@ -97,6 +125,8 @@ function populateDocumentList(documents) {
                 link.appendChild(submitButton);
             }
             link.classList.add("nav-item");
+            link.classList.add('document');
+            link.classList.add(mediatype);
             docDivs[i].appendChild(link);
         });
     }
@@ -131,9 +161,6 @@ function readNote(note) {
 
     readForm.title.value = note.title;
     uploadForm.title.value = note.title;
-    if(note.title != "") {
-        displayTitle(": " + note.title);
-    }
     contentHolder.innerHTML = note.comment;
     contentField.textContent = note.raw_comment;
 
@@ -151,12 +178,13 @@ function readNote(note) {
         noteReader.style.display = "none";
         createNote(note);
     }
-    if (note.title == "") {
-        leftMostButton.style.display = "initial";
-    } else {
-        leftMostButton.style.display = "none";
-    }
 
+    if(note.title) {
+        displayTitle(": " + note.title);
+        leftMostButton.style.display = "none";
+    } else {
+        leftMostButton.style.display = "initial";
+    }
     if (note.documents) {
         populateDocumentList(note.documents);
     }

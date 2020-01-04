@@ -21,7 +21,7 @@
   
   <nav class="navbar navbar-dark bg-dark" id="nav">
 
-    <span class="">
+    <span class="navbar-start">
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -36,9 +36,13 @@
       </button>
     </span>
 
-      <span class="">
-      <button type="button" id="leftButton" class="btn btn-secondary">Modifier</button>
-      <button type="button" id="rightButton" class="btn btn-secondary">Supprimer</button>
+    <span class="navbar-end">
+      <button type="button" id="leftButton" class="btn btn-secondary">
+        Modifier
+      </button>
+      <button type="button" id="rightButton" class="btn btn-secondary">
+        Supprimer
+      </button>
     </span>
 
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
@@ -59,10 +63,11 @@
         <input name="title" type="hidden" />
       </form>
 
+      <div class="navbar docs-nav">
+      </div>
       <div class="contentHolder">
       </div>
-        <div class="navbar docs-nav">
-        </div>
+
     </div>
 
     <div id="noteEditor" class="container" style="display: none;">
@@ -75,8 +80,8 @@
         <input name="title" type="hidden" />
       </form>
 
-        <div class="navbar docs-nav editable">
-        </div>
+      <div class="navbar docs-nav editable">
+      </div>
 
       <form action="engine/document/upload.php" class="dropzone" method="POST">
         <input name="title" type="hidden" />
@@ -84,6 +89,8 @@
     </div>
 
   </div> <!-- #main -->
+
+  <audio controls id="player" style="display: none;"></audio>
 
   <!-- Optional JavaScript : -->
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
