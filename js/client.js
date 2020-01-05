@@ -14,7 +14,13 @@ function query_engine(form, callback) {
     const FD = new FormData(form);
     
     XHR.addEventListener("load", function(event) {
-        const answer = JSON.parse(event.target.responseText);
+        var answer = null;
+        try {
+            answer = JSON.parse(event.target.responseText);
+        } catch (err) {
+            answer = Array();
+            answer.message = "L'engin n'a pas répondu !", "alert-warning";
+        }
         if (answer.message) {
             if (answer.messageType) {
                 messageUser(answer.message, answer.messageType);
@@ -167,12 +173,10 @@ function messageUser(message, messageType) {
 function readNote(note) {
     // TODO Move some to an initialize function to be used in general.
     var readForm = noteReader.querySelector("form.readNote");
-    var uploadForm = noteEditor.querySelector("form.dropzone");
     var contentField = noteEditor.querySelector("form.modifyNote textarea");
     var contentHolder = noteReader.querySelector("div.contentHolder");
 
     readForm.title.value = note.title;
-    uploadForm.title.value = note.title;
     contentHolder.innerHTML = note.comment;
     contentField.textContent = note.raw_comment;
 
@@ -203,12 +207,8 @@ function readNote(note) {
     } else {
         leftMostButton.style.display = "inherit";
     }
-    if (note.documents) {
-        populateDocumentList(note.documents);
-    }
-    if (note.notes) {
-        populateMenu(note.notes);
-    }
+    populateDocumentList(note.documents);
+    populateMenu(note.notes);
     noteReader.style.display = "inherit";
     feather.replace();
 }
@@ -253,8 +253,17 @@ function createNote(note) {
 }
 
 function editNote(note) {
-    var editForm = noteEditor.querySelector("form.modifyNote");
+    var uploadForm = noteEditor.querySelector("form.dropzone");
+    // title will be used by the upload form :
+    uploadForm.title.value = title;
+    uploadForm.dropzone.on('complete', function(event) {
+        const answer = JSON.parse(event.xhr.response);
+        console.log("adding documents to doclist :");
+        console.log(answer);
+        populateDocumentList(answer.documents);
+    });
 
+    var editForm = noteEditor.querySelector("form.modifyNote");
     editForm.action = "engine/note/modify.php";
     editForm.title.value = note.title;
     leftButton.innerHTML = feather.icons["chevron-left"].toSvg();
@@ -285,8 +294,10 @@ function editNote(note) {
 
 document.addEventListener("DOMContentLoaded", function(event) {
     title = $_GET['title'] || "";
+
     var readForm = noteReader.querySelector("form.readNote");
     readForm.title.value = title;
+
     query_engine(readForm, readNote);
 });
 
