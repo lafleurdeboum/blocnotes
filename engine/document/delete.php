@@ -7,9 +7,6 @@ $filename = $_POST["filename"] ?: "";
 if(! is_file("$pool/$filename")) {
   $message = "Il n'y a pas de fichier $filename dans $pool";
   $messageType = "alert-warning";
-  get_document_list();
-  return_answer();
-  return;
 }
 
 load_db();
@@ -18,7 +15,7 @@ $deleteFailed = $db->querySingle(
   "DELETE FROM documents WHERE filename = '$filename';"
 );
 if($deleteFailed) {
-  $message = "Le fichier $filename n'a pas pu être oublié";
+  $message .= "Le fichier $filename n'a pas pu être oublié";
   $messageType = "alert-warning";
   get_document_list();
   return_answer();

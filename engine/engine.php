@@ -71,14 +71,21 @@ function get_note_list() {
 
 function get_document_list() {
   global $db, $title, $documents;
-  if($title == "") {
-    $documentQuery = $db->query(
-        "SELECT filename, filetype FROM documents WHERE attached_notes = '';"
-    );
-  } else {
-    $documentQuery = $db->query(
-        "SELECT filename, filetype FROM documents WHERE instr(attached_notes, '$title');"
-    );
+  try {
+    if($title == "") {
+        $documentQuery = $db->query(
+            "SELECT filename, filetype FROM documents WHERE attached_notes = '';"
+        );
+    } else {
+      $documentQuery = $db->query(
+          "SELECT filename, filetype FROM documents WHERE instr(attached_notes, '$title');"
+      );
+    }
+  } catch(Throwable $err) {
+    if($err->getPrevious() == NULL) {
+      // The query returned an empty list ; $documents is an empty array, we can
+      return;
+    }
   }
   while ($document = $documentQuery->fetchArray()) {
     array_push($documents, array(
@@ -91,8 +98,7 @@ function get_document_list() {
 function return_answer() {
   global $title, $comment, $raw_comment, $documents, $message, $messageType, $noteList;
 
-  // Always return a title and comment ; optionaly return a message and a list of nodes and documents.
-
+  // message, messageType, notes and documents may be empty strings/arrays.
   $returnObject["title"] = $title;
   $returnObject["raw_comment"] = $raw_comment;
   $returnObject["comment"] = $comment;
