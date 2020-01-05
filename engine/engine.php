@@ -10,7 +10,9 @@ $workDir = preg_split("#/engine/#", getcwd())[0];
 // Presume documents upload dir location :
 $pool = "$workDir/documents";
 
-$title = $_POST["title"] ?: "";
+// Let includer override $title ;
+if(! array_key_exists('title', $GLOBALS)) { $title = $_POST["title"]; }
+
 $raw_comment = $_POST["raw_comment"] ?: "";
 $comment = "";
 $noteList = array();
