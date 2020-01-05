@@ -33,14 +33,11 @@ function load_db() {
   }
 }
 
-function get_comment() {
+function md2html() {
   global $comment, $raw_comment, $message, $messageType;
   // Turn comment into html using markdown :
   if($raw_comment == "") {
     $comment = "";
-    // Only return a message if the note is empty :
-    $messageType = "alert-success";
-    $message = "Note vide";
   } else {
     $comment = Markdown::defaultTransform($raw_comment);
     // Separate comment into sections around h2 headers :
