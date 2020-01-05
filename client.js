@@ -218,6 +218,7 @@ function deleteNote(note) {
 
     deleteForm.title.value = note.title;
     query_engine(deleteForm, function(answer) {
+        populateMenu(answer.notes);
         readNote(answer);
     });
 }
@@ -225,6 +226,7 @@ function deleteNote(note) {
 function createNote(note) {
     // There's a "form.create" but we'll just tweak a form.modify form.
     editNote(note);
+    leftMostButton.style.display = "none";
     var createForm = noteEditor.querySelector("form.modifyNote");
 
     createForm.action = "engine/note/create.php";
@@ -270,6 +272,12 @@ function editNote(note) {
             readNote(answer);
         });
     }
+    leftMostButton.innerHTML = feather.icons["trash-2"].toSvg();
+    leftMostButton.onclick = function(event) {
+        noteEditor.style.display = "none";
+        deleteNote(note);
+    }
+    leftMostButton.style.display = "inherit";
     dropzoneMessage = document.querySelector(".dz-message");
     dropzoneMessage.innerHTML = feather.icons['upload'].toSvg();
     noteEditor.style.display = "inherit";
