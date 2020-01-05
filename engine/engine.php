@@ -99,16 +99,10 @@ function return_answer() {
   $returnObject["title"] = $title;
   $returnObject["raw_comment"] = $raw_comment;
   $returnObject["comment"] = $comment;
-  if ($message) {
-    $returnObject["message"] = $message;
-    $returnObject["messageType"] = $messageType;
-  }
-  if ($noteList) {
-    $returnObject["notes"] = $noteList;
-  }
-  if ($documents) {
-    $returnObject["documents"] = $documents;
-  }
+  $returnObject["message"] = $message;
+  $returnObject["messageType"] = $messageType;
+  $returnObject["notes"] = $noteList;
+  $returnObject["documents"] = $documents;
 
   echo json_encode($returnObject);
   echo "\n";
