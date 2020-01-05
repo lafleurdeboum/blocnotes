@@ -22,8 +22,8 @@
   <nav class="navbar navbar-dark bg-dark" id="nav">
 
     <span class="navbar-start">
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
+      <button class="btn" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <i data-feather="list"></i>
       </button>
       <a class='navbar-brand' href='.'>
         Bloc Notes
@@ -31,15 +31,15 @@
 
       <span id="titleSpan"></span>
 
-      <button type='button' id='leftMostButton' class='btn btn-secondary'>
+      <button type='button' id='leftMostButton' class='btn'>
           + <!-- New -->
       </button>
     </span>
 
     <span class="navbar-end">
-      <button type="button" id="leftButton" class="btn btn-secondary" style="display: none;">
+      <button type="button" id="leftButton" class="btn" style="display: none;">
       </button>
-      <button type="button" id="rightButton" class="btn btn-secondary">
+      <button type="button" id="rightButton" class="btn">
         Modifier
       </button>
     </span>
@@ -71,6 +71,13 @@
 
     <div id="noteEditor" class="container" style="display: none;">
 
+      <div class="navbar docs-nav editable">
+      </div>
+
+      <form action="engine/document/upload.php" class="dropzone" method="POST">
+        <input name="title" type="hidden" />
+      </form>
+
       <form action="engine/note/modify.php" class="modifyNote" method="POST">
         <input name="title" type="hidden" />
         <textarea name="raw_comment"></textarea>
@@ -78,18 +85,11 @@
       <form action="engine/note/create.php" class="createNote" method="POST">
         <input name="title" type="hidden" />
       </form>
-
-      <div class="navbar docs-nav editable">
-      </div>
-
-      <form action="engine/document/upload.php" class="dropzone" method="POST">
-        <input name="title" type="hidden" />
-      </form>
     </div>
 
   </div> <!-- #main -->
 
-  <audio controls id="player" style="display: none;"></audio>
+  <audio controls id="player" style="display: none;" filename=""></audio>
 
 
   <!-- Optional JavaScript : -->

@@ -33,7 +33,6 @@ function populateMenu(notes) {
     var noteMenus = document.querySelectorAll(".notes-nav");
     for(var i=0; i < noteMenus.length; i++) {
         var noteMenu = noteMenus[i];
-        console.log(noteMenu);
         noteMenu.innerHTML = "";
         notes.forEach(function(note) {
             if(note != "") {
@@ -50,15 +49,33 @@ function displayTitle(title) {
     var titleSpan = document.querySelector("#titleSpan");
     titleSpan.innerHTML = title;
 }
-function Play(file) {
-    console.log(file);
-    player = document.querySelector("#player");
-    player.autoplay = true;
-    player.src = file;
-    player.style.display = "inline";
-    console.log(player);
-    //newMedia = "<audio controls src='" + file + "' width=100 height=100 />";
-    //container.innerHTML += newMedia;
+function getLocation(href) {
+    a = document.createElement("a");
+    a.href = href;
+    // The "a" element automatically gets a complete URL as href.
+    return a.href;
+}
+function togglePlay(file, event) {
+    button = event.target;
+    //player = document.querySelector("#player");
+    fileLocation = getLocation(file);
+    if(fileLocation != player.src) {
+        button.innerHTML = feather.icons["pause"].toSvg();
+        player.src = file;
+        player.style.display = "inline";
+        player.play();
+        console.log("playing " + file);
+    } else {
+        if(player.paused) {
+            button.innerHTML = feather.icons["pause"].toSvg();
+            player.play();
+            console.log("resuming " + file);
+        } else {
+            button.innerHTML = feather.icons["play"].toSvg();
+            player.pause();
+            console.log("pausing " + file);
+        }
+    }
 }
 
 function populateDocumentList(documents) {
@@ -73,56 +90,51 @@ function populateDocumentList(documents) {
             switch(mediatype) {
                 case 'audio':
                 case 'video':
-                    //newMedia = "<video controls src='documents/" + fileinfo.filename + "' width=100 height=100 />";
-                    //newMedia = "<a onclick=Play('documents/" + fileinfo.filename + "');><img src='icons/" + mediatype + ".svg' width=100 height=100 /></a>";
+                    if(! docDiv.classList.contains("editable")) {
+                        button = document.createElement("button");
+                        fileLocation = getLocation("documents/" + fileinfo.filename);
+                        if(fileLocation != player.src) {
+                            button.innerHTML = feather.icons["play"].toSvg();
+                        } else {
+                            button.innerHTML = feather.icons["pause"].toSvg();
+                        }
+                        button.onclick = function(event) {
+                            togglePlay('documents/' + fileinfo.filename, event);
+                        };
+                        button.classList.add("btn");
+                        link.appendChild(button);
+                    }
                     newMedia = document.createElement("span");
-                    button = document.createElement("button");
-                    button.innerHTML = "<img src='icons/audio.svg'></img>" + fileinfo.filename;
-                    button.onclick = function() {
-                        Play('documents/' + fileinfo.filename);
-                    };
-                    button.classList.add("btn");
-                    button.classList.add("btn-secondary");
-                    newMedia.appendChild(button);
-                    //newMedia.innerHTML += fileinfo.filename;
-                    //link.innerHTML = newMedia;
-                    //newMedia.onload = () => { link.appendChild(newMedia); };
+                    newMedia.innerHTML = fileinfo.filename;
                     link.appendChild(newMedia);
                     break;
                 case "image":
                     newMedia = "<a href='documents/" + fileinfo.filename + "'><img src='documents/" + fileinfo.filename + "' width=100 height=100 /></a>";
                     link.innerHTML = newMedia;
-                /*
-                case 'image':
-                    newMedia = new Image();
-                    newMedia.onload = function() {
-                        link.appendChild(newMedia);
-                    }
-                    newMedia.width = '100';
-                    newMedia.height = '100';
-                    newMedia.src = "documents/" + fileinfo.filename;
                     break;
-                */
             }
             if(docDiv.classList.contains("editable")) {
-                var editDocListForm = document.createElement("form");
-                //editDocListForm.action = "engine/note/detachDocument.php";
-                editDocListForm.action = "engine/document/delete.php";
-                editDocListForm.method = "post";
-                editDocListForm.classList.add("deleteDocument");
+                var deleteDocForm = document.createElement("form");
+                //deleteDocForm.action = "engine/note/detachDocument.php";
+                deleteDocForm.action = "engine/document/delete.php";
+                deleteDocForm.method = "post";
+                deleteDocForm.style.display = "none";
+                deleteDocForm.classList.add("deleteDocument");
                 var filenameInput = document.createElement("input");
                 filenameInput.name = "filename";
                 filenameInput.value = fileinfo.filename;
                 filenameInput.type = "hidden";
-                editDocListForm.appendChild(filenameInput);
-                var submitButton = document.createElement("button");
-                submitButton.onclick = function(event) {
-                    query_engine(editDocListForm, function(answer) {
+                deleteDocForm.appendChild(filenameInput);
+                var deleteButton = document.createElement("button");
+                deleteButton.innerHTML = feather.icons["trash-2"].toSvg();
+                deleteButton.classList.add("btn");
+                deleteButton.onclick = function(event) {
+                    query_engine(deleteDocForm, function(answer) {
                         populateDocumentList(answer.documents);
                     });
                 };
-                link.appendChild(editDocListForm);
-                link.appendChild(submitButton);
+                link.appendChild(deleteDocForm);
+                link.appendChild(deleteButton);
             }
             link.classList.add("nav-item");
             link.classList.add('document');
@@ -189,7 +201,7 @@ function readNote(note) {
         displayTitle(": " + note.title);
         leftMostButton.style.display = "none";
     } else {
-        leftMostButton.style.display = "initial";
+        leftMostButton.style.display = "inherit";
     }
     if (note.documents) {
         populateDocumentList(note.documents);
@@ -197,7 +209,7 @@ function readNote(note) {
     if (note.notes) {
         populateMenu(note.notes);
     }
-    noteReader.style.display = "initial";
+    noteReader.style.display = "inherit";
 }
 
 function deleteNote(note) {
@@ -214,9 +226,11 @@ function createNote(note) {
     editNote(note);
     var createForm = noteEditor.querySelector("form.modifyNote");
 
-    createForm.title.type = "input";
-    createForm.title.value = note.title;
     createForm.action = "engine/note/create.php";
+    createForm.title.type = "input";
+    createForm.title.value = "";
+    createForm.title.placeholder = "nouvelle note";
+    createForm.raw_comment.textContent = "";
     //rightButton.textContent = "Créer"; // Create
     rightButton.innerHTML = feather.icons["save"].toSvg();
     rightButton.onclick = function(event) {
@@ -227,15 +241,21 @@ function createNote(note) {
         });
     }
     leftButton.innerHTML = feather.icons["chevron-left"].toSvg();
-    leftButton.style.display = "initial";
+    leftButton.onclick = function(event) {
+        createForm.title.type = "hidden";
+        noteEditor.style.display = "none";
+        readNote(note);
+    }
+    leftButton.style.display = "inherit";
 }
 
 function editNote(note) {
     var editForm = noteEditor.querySelector("form.modifyNote");
 
+    editForm.action = "engine/note/modify.php";
     editForm.title.value = note.title;
     leftButton.innerHTML = feather.icons["chevron-left"].toSvg();
-    leftButton.style.display = "initial";
+    leftButton.style.display = "inherit";
     //leftButton.textContent = "Annuler"; // Cancel
     leftButton.onclick = function(event) {
         noteEditor.style.display = "none";
@@ -249,7 +269,9 @@ function editNote(note) {
             readNote(answer);
         });
     }
-    noteEditor.style.display = "initial";
+    dropzoneMessage = document.querySelector(".dz-message");
+    dropzoneMessage.innerHTML = feather.icons['upload'].toSvg();
+    noteEditor.style.display = "inherit";
 }
 
 document.addEventListener("DOMContentLoaded", function(event) {
@@ -257,5 +279,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
     var readForm = noteReader.querySelector("form.readNote");
     readForm.title.value = title;
     query_engine(readForm, readNote);
+    feather.replace();
 });
 

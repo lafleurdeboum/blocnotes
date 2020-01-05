@@ -7,25 +7,23 @@ pre {
   font-size: large;
   font-weight: bold;
 }
--webkit-media-controls-panel {
-  max-width: 50px;
-}
-/*
-.document.audio {
-  background-image: url("../icons/audio.svg");
-  background-size: 2em;
-  background-repeat: no-repeat;
-  padding: 0.3em;
-}
-.document.video {
-  background: url("../icons/video.svg");
-}
-*/
 #player {
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
+}
+.btn {
+    color: white;
+    display: inline-flex;
+    align-items: center;
+}
+.btn:hover {
+    color: white;
+    background-color: grey;
+}
+-webkit-media-controls-panel {
+  max-width: 50px;
 }
 
 body {
@@ -39,9 +37,16 @@ body {
 }
 nav {
   flex-wrap: nowrap;
+  min-height: 4.2em;
 }
 nav > span {
   display: flex;
+  align-items: center;
+}
+nav div.alert {
+    margin-bottom: 0;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
 }
 .navbar-nav {
   display: block;
@@ -66,8 +71,18 @@ form.modifyNote textarea {
   height: 60vh;
 }
 form.dropzone {
+  display: flex;
   width: 100%;
-  height: 16vh;
+  min-height: 2em;
+  justify-content: center;
+  margin-bottom: 0.3em;
+  padding: 0;
+}
+form.dropzone div.dz-message {
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+    color: black;
 }
 div.docs-nav {
   justify-content: flex-start;
@@ -75,11 +90,11 @@ div.docs-nav {
 #noteReader .contentHolder {
   display: flex;
   flex-wrap: wrap;
-  /* Acts as a fallback : */
-  justify-content: space-around;
-  justify-content: space-evenly;
 }
 #noteReader .contentHolder section {
   font-size: large;
+  margin: auto;
+  padding-left: 1em;
+  padding-right: 1em;
 }
 
