@@ -18,8 +18,7 @@ if (move_uploaded_file($_FILES['file']['tmp_name'], $pool . "/" . $uploadFile)) 
   if (!$result) { $message .= " - non enregistré dans la DB"; }
 } else {
   $messageType = "alert-warning";
-  $message = "Le fichier <b>" . $uploadFile;
-  $message .= "</b> n'a pas pu être ajouté.
+  $message = "Le fichier <b>$uploadFile</b> n'a pas pu être ajouté.
       Vérifiez les permissions sur le dossier.";
 }
 

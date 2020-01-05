@@ -12,16 +12,16 @@ if ($article_exists) {
       "UPDATE notes SET comment = '" . SQLite3::escapeString($raw_comment) . "' WHERE title = '$title';"
   );
   if ($writeFailed) {
+    // We never reach here ; we'd better try testing if the db file is rw enabled.
     $messageType = "alert-warning";
-    $message = "Il y a eu un problème.
-        Le commentaire n'a pas été mis à jour pour la note <b>$title</b>";
+    $message = "Le commentaire n'a pas pu être mis à jour";
   } else {
     $messageType = "alert-success";
-    $message = "Commentaire mis à jour pour la note <b>$title</b>";
+    $message = "Commentaire mis à jour";
   }
 } else {
   $messageType = "alert-warning";
-  $message = "note $title non trouvée.";
+  $message = "Note $title non trouvée";
 }
 
 require_once 'read.php';

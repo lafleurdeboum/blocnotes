@@ -9,7 +9,7 @@ $article_exists = $db->querySingle(
 );
 if ($article_exists) {
     $messageType = "alert-warning";
-    $message = "la note $title existe déjà.";
+    $message = "La note $title existe déjà";
 } else {
   $result = $db->exec(
     "INSERT OR IGNORE INTO notes (title, comment) VALUES ('$title',
@@ -17,11 +17,10 @@ if ($article_exists) {
   );
   if (! $result) {
     $messageType = "alert-warning";
-    $message = "Le nouveau commentaire n'a pas été enregistré pour l'article
-        <b>$title</b>.<br />";
+    $message = "Le nouveau commentaire n'a pas été enregistré";
   } else {
     $messageType = "alert-success";
-    $message = "Nouveau commentaire enregistré pour l'article <b>$title</b>";
+    $message = "Nouveau commentaire enregistré";
   }
 }
 

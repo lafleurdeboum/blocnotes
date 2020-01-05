@@ -25,7 +25,7 @@ function load_db() {
 
   if (! extension_loaded('sqlite3')) {
     $messageType = "alert-warning";
-    $message = "Pas de support sqlite3 ! Pas d'Accès à la base de données <b>$dbFile</b>";
+    $message = "Pas de support sqlite3 ! <br />Pas d'Accès à la base de données <b>$dbFile</b>";
   } else {
     $db = new SQLite3("$workDir/$dbFile");
   }
@@ -38,7 +38,7 @@ function get_comment() {
     $comment = "";
     // Only return a message if the note is empty :
     $messageType = "alert-success";
-    $message = "note vide : <b>$title</b>";
+    $message = "Note vide";
   } else {
     $comment = Markdown::defaultTransform($raw_comment);
     // Separate comment into sections around h2 headers :
