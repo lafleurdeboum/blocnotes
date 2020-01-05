@@ -210,6 +210,7 @@ function readNote(note) {
         populateMenu(note.notes);
     }
     noteReader.style.display = "inherit";
+    feather.replace();
 }
 
 function deleteNote(note) {
@@ -279,6 +280,5 @@ document.addEventListener("DOMContentLoaded", function(event) {
     var readForm = noteReader.querySelector("form.readNote");
     readForm.title.value = title;
     query_engine(readForm, readNote);
-    feather.replace();
 });
 
