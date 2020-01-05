@@ -40,7 +40,7 @@
     </span>
 
     <span class="navbar-end">
-      <button type="button" id="leftButton" class="btn" style="display: none;">
+      <button type="button" id="leftButton" class="btn" hidden>
       </button>
       <button type="button" id="rightButton" class="btn">
         Modifier
@@ -56,7 +56,7 @@
 
   <div id="main" class="container">
 
-    <div id="noteReader" class="container" style="display: none;">
+    <div id="noteReader" class="container">
 
       <form action="engine/note/read.php" class="readNote" method="POST">
         <input name="title" type="hidden" />
@@ -72,7 +72,7 @@
 
     </div>
 
-    <div id="noteEditor" class="container" style="display: none;">
+    <div id="noteEditor" class="container" hidden>
 
       <div class="navbar docs-nav editable">
       </div>
@@ -92,7 +92,7 @@
 
   </div> <!-- #main -->
 
-  <audio controls id="player" style="display: none;" filename=""></audio>
+  <audio controls id="player" filename="" hidden></audio>
 
 
   <!-- Optional JavaScript : -->

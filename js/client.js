@@ -68,7 +68,7 @@ function togglePlay(file, event) {
     if(fileLocation != player.src) {
         button.innerHTML = feather.icons["pause"].toSvg();
         player.src = file;
-        player.style.display = "inline";
+        player.hidden = false;
         player.play();
         console.log("playing " + file);
     } else {
@@ -124,7 +124,7 @@ function populateDocumentList(documents) {
                 //deleteDocForm.action = "engine/note/detachDocument.php";
                 deleteDocForm.action = "engine/document/delete.php";
                 deleteDocForm.method = "post";
-                deleteDocForm.style.display = "none";
+                deleteDocForm.hidden = true;
                 deleteDocForm.classList.add("deleteDocument");
                 var filenameInput = document.createElement("input");
                 filenameInput.name = "filename";
@@ -182,34 +182,34 @@ function readNote(note) {
 
     rightButton.innerHTML = feather.icons["edit"].toSvg();
     rightButton.onclick = function(event) {
-        noteReader.style.display = "none";
+        noteReader.hidden = true;
         editNote(note);
     }
     /*
     leftButton.textContent = "Supprimer"; // Modify
     leftButton.onclick = function(event) {
-        noteReader.style.display = "none";
+        noteReader.hidden = true;
         deleteNote(note);
     }
     */
-    leftButton.style.display = "none";
+    leftButton.hidden = true;
 
     //leftMostButton.innerHTML = feather.icons["file-plus"].toSvg();
     leftMostButton.innerHTML = feather.icons["plus-square"].toSvg();
     leftMostButton.onclick = function(event) {
-        noteReader.style.display = "none";
+        noteReader.hidden = true;
         createNote(note);
     }
 
     if(note.title) {
         displayTitle(": " + note.title);
-        leftMostButton.style.display = "none";
+        leftMostButton.hidden = true;
     } else {
-        leftMostButton.style.display = "inherit";
+        leftMostButton.hidden = false;
     }
     populateDocumentList(note.documents);
     populateMenu(note.notes);
-    noteReader.style.display = "inherit";
+    noteReader.hidden = false;
     feather.replace();
 }
 
@@ -226,7 +226,7 @@ function deleteNote(note) {
 function createNote(note) {
     // There's a "form.create" but we'll just tweak a form.modify form.
     editNote(note);
-    leftMostButton.style.display = "none";
+    leftMostButton.hidden = true;
     var createForm = noteEditor.querySelector("form.modifyNote");
 
     createForm.action = "engine/note/create.php";
@@ -239,17 +239,17 @@ function createNote(note) {
     rightButton.onclick = function(event) {
         query_engine(createForm, function(answer) {
             createForm.title.type = "hidden";
-            noteEditor.style.display = "none";
+            noteEditor.hidden = true;
             readNote(answer);
         });
     }
     leftButton.innerHTML = feather.icons["chevron-left"].toSvg();
     leftButton.onclick = function(event) {
         createForm.title.type = "hidden";
-        noteEditor.style.display = "none";
+        noteEditor.hidden = true;
         readNote(note);
     }
-    leftButton.style.display = "inherit";
+    leftButton.hidden = false;
 }
 
 function editNote(note) {
@@ -267,29 +267,29 @@ function editNote(note) {
     editForm.action = "engine/note/modify.php";
     editForm.title.value = note.title;
     leftButton.innerHTML = feather.icons["chevron-left"].toSvg();
-    leftButton.style.display = "inherit";
+    leftButton.hidden = false;
     //leftButton.textContent = "Annuler"; // Cancel
     leftButton.onclick = function(event) {
-        noteEditor.style.display = "none";
+        noteEditor.hidden = true;
         readNote(note);
     }
     //rightButton.textContent = "Enregistrer"; // Save
     rightButton.innerHTML = feather.icons["save"].toSvg();
     rightButton.onclick = function(event) {
         query_engine(editForm, function(answer) {
-            noteEditor.style.display = "none";
+            noteEditor.hidden = true;
             readNote(answer);
         });
     }
     leftMostButton.innerHTML = feather.icons["trash-2"].toSvg();
     leftMostButton.onclick = function(event) {
-        noteEditor.style.display = "none";
+        noteEditor.hidden = true;
         deleteNote(note);
     }
-    leftMostButton.style.display = "inherit";
+    leftMostButton.hidden = false;
     dropzoneMessage = document.querySelector(".dz-message");
     dropzoneMessage.innerHTML = feather.icons['upload'].toSvg();
-    noteEditor.style.display = "inherit";
+    noteEditor.hidden = false;
 }
 
 document.addEventListener("DOMContentLoaded", function(event) {
