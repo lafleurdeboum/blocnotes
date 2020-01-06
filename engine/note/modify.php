@@ -13,7 +13,7 @@ if ($article_exists) {
   );
   if ($writeFailed) {
     // We never reach here ; we'd better try testing if the db file is rw enabled.
-    $messageType = "alert-warning";
+    $messageType = "alert-danger";
     $message = "Le commentaire n'a pas pu être mis à jour";
   } else {
     $messageType = "alert-success";

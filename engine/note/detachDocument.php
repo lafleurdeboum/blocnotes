@@ -18,7 +18,7 @@ $attachedNotes = $db->querySingle(
     "SELECT attached_notes FROM documents WHERE filename = '$filename';"
 );
 if(strpos($attachedNotes, $title) === false) {
-  $message = "Impossible de délier : le fichier $filename n'était pas lié à la note $title";
+  $message = "Le fichier $filename n'était pas lié à la note $title";
   $messageType = "alert-warning";
   return_answer();
   return;

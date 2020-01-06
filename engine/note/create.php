@@ -8,7 +8,7 @@ $article_exists = $db->querySingle(
     "SELECT EXISTS(SELECT comment FROM notes WHERE title = '$title');"
 );
 if ($article_exists) {
-    $messageType = "alert-warning";
+    $messageType = "alert-danger";
     $message = "La note $title existe déjà";
 } else {
   $result = $db->exec(
@@ -16,7 +16,7 @@ if ($article_exists) {
       '" . SQLite3::escapeString($raw_comment) . "' );"
   );
   if (! $result) {
-    $messageType = "alert-warning";
+    $messageType = "alert-danger";
     $message = "Le nouveau commentaire n'a pas été enregistré";
   } else {
     $messageType = "alert-success";

@@ -10,7 +10,7 @@ if ($result) {
   $message = "Note <b>$title</b> supprimée";
   $title = "";
 } else {
-  $messageType = "alert-warning";
+  $messageType = "alert-danger";
   $message = "La note <b>$title</b> n'a pas pu être supprimée";
 }
 
