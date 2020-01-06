@@ -19,7 +19,8 @@ function query_engine(form, callback) {
             answer = JSON.parse(event.target.responseText);
         } catch (err) {
             answer = Array();
-            answer.message = "L'engin n'a pas répondu !", "alert-warning";
+            answer.message = "L'engin n'a pas répondu";
+            answer.messageType = "alert-warning";
         }
         if (answer.message) {
             if (answer.messageType) {
