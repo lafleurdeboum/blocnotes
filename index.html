@@ -69,8 +69,7 @@
       </div>
       <div class="contentHolder">
       </div>
-
-    </div>
+    </div><!-- noteReader -->
 
     <div id="noteEditor" class="container" hidden>
 
@@ -85,10 +84,17 @@
         <input name="title" type="hidden" />
         <textarea name="raw_comment"></textarea>
       </form>
+    </div><!-- noteEditor -->
+
+    <div id="noteCreator" class="container" hidden>
+
       <form action="engine/note/create.php" class="createNote" method="POST">
-        <input name="title" type="hidden" />
+        <input name="title" type="input" />
+        <div class="navbar docs-nav editable">
+        </div>
+        <textarea name="raw_comment"></textarea>
       </form>
-    </div>
+    </div><!-- noteCreator -->
 
   </div> <!-- #main -->
 

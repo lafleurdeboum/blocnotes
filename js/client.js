@@ -185,13 +185,7 @@ function readNote(note) {
         noteReader.hidden = true;
         editNote(note);
     }
-    /*
-    leftButton.textContent = "Supprimer"; // Modify
-    leftButton.onclick = function(event) {
-        noteReader.hidden = true;
-        deleteNote(note);
-    }
-    */
+
     leftButton.hidden = true;
 
     //leftMostButton.innerHTML = feather.icons["file-plus"].toSvg();
@@ -207,10 +201,11 @@ function readNote(note) {
     } else {
         leftMostButton.hidden = false;
     }
-    populateDocumentList(note.documents);
-    populateMenu(note.notes);
+
     noteReader.hidden = false;
     feather.replace();
+    populateDocumentList(note.documents);
+    populateMenu(note.notes);
 }
 
 function deleteNote(note) {
@@ -225,31 +220,36 @@ function deleteNote(note) {
 
 function createNote(note) {
     // There's a "form.create" but we'll just tweak a form.modify form.
-    editNote(note);
+    //editNote(note);
     leftMostButton.hidden = true;
-    var createForm = noteEditor.querySelector("form.modifyNote");
-
-    createForm.action = "engine/note/create.php";
-    createForm.title.type = "input";
-    createForm.title.value = "";
-    createForm.title.placeholder = "nouvelle note";
+    leftButton.onclick = function(event) {
+        noteCreator.hidden = true;
+        readNote(note);
+    };
+    var createForm = noteCreator.querySelector("form.createNote");
+    //createForm.action = "engine/note/create.php";
+    //createForm.title.type = "input";
+    createForm.title.value = "__draft__";
+    createForm.title.placeholder = "Nouvelle note";
     createForm.raw_comment.textContent = "";
-    //rightButton.textContent = "Créer"; // Create
+
     rightButton.innerHTML = feather.icons["save"].toSvg();
     rightButton.onclick = function(event) {
         query_engine(createForm, function(answer) {
-            createForm.title.type = "hidden";
-            noteEditor.hidden = true;
+            noteCreator.hidden = true;
+            title = answer.title;
             readNote(answer);
         });
     }
-    leftButton.innerHTML = feather.icons["chevron-left"].toSvg();
+    //leftButton.innerHTML = feather.icons["chevron-left"].toSvg();
     leftButton.onclick = function(event) {
-        createForm.title.type = "hidden";
-        noteEditor.hidden = true;
+        //createForm.title.type = "hidden";
+        noteCreator.hidden = true;
         readNote(note);
     }
+    rightButton.hidden = false;
     leftButton.hidden = false;
+    noteCreator.hidden = false;
 }
 
 function editNote(note) {
@@ -271,6 +271,8 @@ function editNote(note) {
     //leftButton.textContent = "Annuler"; // Cancel
     leftButton.onclick = function(event) {
         noteEditor.hidden = true;
+        //noteReader.hidden = false;
+        // DEBUG here we need to load view, not initialize it
         readNote(note);
     }
     //rightButton.textContent = "Enregistrer"; // Save
