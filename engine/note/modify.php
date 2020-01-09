@@ -1,27 +1,64 @@
 <?php
-
+// Les photos suivent mais pas le commentaire.
 require_once 'engine.php';
+
+if(array_key_exists("old_title", $_POST)) {
+  $old_title = $_POST["old_title"];
+} else {
+  $old_title = $title;
+}
 
 load_db();
 
-$article_exists = $db->querySingle(
-    "SELECT EXISTS(SELECT comment FROM notes WHERE title = '$title');"
+$note_exists = $db->querySingle(
+  "SELECT EXISTS(SELECT title FROM notes WHERE title = '$old_title');"
 );
-if ($article_exists) {
-  $writeFailed = $db->querySingle(
-      "UPDATE notes SET comment = '" . SQLite3::escapeString($raw_comment) . "' WHERE title = '$title';"
-  );
-  if ($writeFailed) {
-    // We never reach here ; we'd better try testing if the db file is rw enabled.
-    $messageType = "alert-danger";
-    $message = "Le commentaire n'a pas pu être mis à jour";
-  } else {
-    $messageType = "alert-success";
+if($note_exists) {
+  // Update comment :
+  try {
+    $db->querySingle(
+        "UPDATE notes SET comment = '" . SQLite3::escapeString($raw_comment) . "' WHERE title = '$old_title';"
+    );
     $message = "Commentaire mis à jour";
+  } catch(Throwable $err) {
+    $messageType = "alert-danger";
+    $message = $err.message;
+  }
+  if($old_title != $title) {
+    $new_note_exists = $db->querySingle(
+      "SELECT EXISTS(SELECT title FROM notes WHERE title = '$title');"
+    );
+    if(! $new_note_exists) {
+      try {
+        $db->querySingle(
+            "UPDATE notes SET title = '$title' WHERE title = '$old_title';"
+        );
+        $relinkableDocs = $db->query(
+            "SELECT filename, attached_notes FROM documents WHERE instr(attached_notes, '$old_title,')"
+        );
+        while($row = $relinkableDocs->fetchArray()) {
+          $filename = $row[0];
+          $attachedNotes = $row[1];
+          $newAttachedNotes = preg_replace("/$old_title,/", "$title,", $attachedNotes);
+          $db->querySingle(
+              "UPDATE documents SET attached_notes = '$newAttachedNotes' WHERE filename = '$filename'"
+          );
+        }
+        $message = "Note déplacée ; document reliés";
+      } catch(Throwable $err) {
+        $messageType = "alert-danger";
+        $message = $err.message;
+      }
+    } else {
+      $messageType = "alert-danger";
+      $message = "La note <b>$title</b> existe déjà";
+      $title = "";
+    }
   }
 } else {
-  $messageType = "alert-warning";
-  $message = "Note $title non trouvée";
+  $messageType = "alert-danger";
+  $message = "La note <b>$old_title</b> n'existe pas";
+  $title = "";
 }
 
 require_once 'read.php';

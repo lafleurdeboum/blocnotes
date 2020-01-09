@@ -4,6 +4,7 @@ require_once 'Markdown/Markdown.inc.php';
 use Michelf\Markdown;
 
 $db = null;
+//$dbFile = "admin/notes.db";
 $dbFile = "admin/rara.db";
 // Presume both db and engine commands live in "$ProgramRoot/engine" :
 $workDir = preg_split("#/engine/#", getcwd())[0];
@@ -21,6 +22,17 @@ $message = null;
 $messageType = null;
 $returnObject = array();
 
+// Let php warnings become errors so as to catch sqlite errors :
+set_error_handler(function($errno, $errstr, $errfile, $errline){
+  if($errno === E_WARNING){
+    trigger_error($errstr, E_ERROR);
+    return true;
+  } else {
+    // Fallback to default php error handler :
+    return false;
+  }
+});
+
 
 function load_db() {
   global $db, $dbFile, $workDir, $message, $messageType;
@@ -29,7 +41,12 @@ function load_db() {
     $messageType = "alert-warning";
     $message = "Pas de support sqlite3 ! <br />Pas d'Accès à la base de données <b>$dbFile</b>";
   } else {
-    $db = new SQLite3("$workDir/$dbFile");
+    try {
+      $db = new SQLite3("$workDir/$dbFile");
+    } catch(Throwable $err) {
+      $messageType = "alert-danger";
+      $message = $err.message;
+    }
   }
 }
 
@@ -61,7 +78,12 @@ function md2html() {
 
 function get_note_list() {
   global $db, $noteList;
-  $notes = $db->query("SELECT title FROM notes;");
+  try {
+    $notes = $db->query("SELECT title FROM notes;");
+  } catch(Throwable $err) {
+    $messageType = "alert-danger";
+    $message = $err.message;
+  }
   if ($notes) {
     while ($note = $notes->fetchArray()) {
       array_push($noteList, $note['title']);
