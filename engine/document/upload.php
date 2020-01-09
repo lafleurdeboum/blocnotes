@@ -9,7 +9,6 @@ $uploadFile = basename($_FILES['file']['name']);
 
 //if (move_uploaded_file($_FILES['userfile']['tmp_name'], $pool . $uploadFile)) {
 if (move_uploaded_file($_FILES['file']['tmp_name'], $pool . "/" . $uploadFile)) {
-  $messageType = "alert-success";
   $type = mime_content_type($pool . "/" . $uploadFile);
   $message = "Fichier <b>$uploadFile</b> ajouté à $pool, type $type, attaché au titre '$title'.";
   $result = $db->exec(

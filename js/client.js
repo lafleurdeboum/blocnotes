@@ -52,10 +52,6 @@ function populateMenu(notes) {
     }
 }
 
-function displayTitle(title) {
-    var titleSpan = document.querySelector("#titleSpan");
-    titleSpan.innerHTML = title;
-}
 function getLocation(href) {
     a = document.createElement("a");
     a.href = href;
@@ -173,11 +169,13 @@ function messageUser(message, messageType) {
 
 function readNote(note) {
     // TODO Move some to an initialize function to be used in general.
-    var readForm = noteReader.querySelector("form.readNote");
-    var contentField = noteEditor.querySelector("form.modifyNote textarea");
+    var readForm = noteReader.querySelector("#readNote");
+    var contentField = noteEditor.querySelector("#modifyNote textarea");
     var contentHolder = noteReader.querySelector("div.contentHolder");
 
     readForm.title.value = note.title;
+    titleInput.value = note.title;
+    titleInput.hidden = true;
     contentHolder.innerHTML = note.comment;
     contentField.textContent = note.raw_comment;
 
@@ -197,7 +195,9 @@ function readNote(note) {
     }
 
     if(note.title) {
-        displayTitle(": " + note.title);
+        var titleSpan = document.querySelector("#titleSpan");
+        titleSpan.innerHTML = note.title;
+        titleSpan.hidden = false;
         leftMostButton.hidden = true;
     } else {
         leftMostButton.hidden = false;
@@ -210,7 +210,7 @@ function readNote(note) {
 }
 
 function deleteNote(note) {
-    var deleteForm = noteReader.querySelector("form.deleteNote");
+    var deleteForm = noteReader.querySelector("#deleteNote");
 
     deleteForm.title.value = note.title;
     query_engine(deleteForm, function(answer) {
@@ -220,29 +220,22 @@ function deleteNote(note) {
 }
 
 function createNote(note) {
-    // There's a "form.create" but we'll just tweak a form.modify form.
-    //editNote(note);
-    leftMostButton.hidden = true;
-    leftButton.onclick = function(event) {
-        noteCreator.hidden = true;
-        readNote(note);
-    };
-    var createForm = noteCreator.querySelector("form.createNote");
-    //createForm.action = "engine/note/create.php";
-    //createForm.title.type = "input";
-    createForm.title.value = "__draft__";
-    createForm.title.placeholder = "Nouvelle note";
+    titleInput.placeholder = "Nouvelle note";
+    titleInput.hidden = false;
+    titleSpan.hidden = true;
+    var createForm = noteCreator.querySelector("#createNote");
     createForm.raw_comment.textContent = "";
 
     rightButton.innerHTML = feather.icons["save"].toSvg();
     rightButton.onclick = function(event) {
+        createForm.title.value = titleInput.value;
         query_engine(createForm, function(answer) {
             noteCreator.hidden = true;
             title = answer.title;
             readNote(answer);
         });
     }
-    //leftButton.innerHTML = feather.icons["chevron-left"].toSvg();
+    leftButton.innerHTML = feather.icons["chevron-left"].toSvg();
     leftButton.onclick = function(event) {
         //createForm.title.type = "hidden";
         noteCreator.hidden = true;
@@ -250,26 +243,30 @@ function createNote(note) {
     }
     rightButton.hidden = false;
     leftButton.hidden = false;
+    leftMostButton.hidden = true;
     noteCreator.hidden = false;
 }
 
 function editNote(note) {
+    titleInput.value = note.title;
+    titleInput.hidden = false;
+    titleSpan.hidden = true;
+
     var uploadForm = noteEditor.querySelector("form.dropzone");
-    // title will be used by the upload form :
-    uploadForm.title.value = title;
+    // uploaded file will be linked to note. If the note name changes they are
+    // relinked.
+    uploadForm.title.value = titleInput.value;
     uploadForm.dropzone.on('complete', function(event) {
         const answer = JSON.parse(event.xhr.response);
         console.log("adding documents to doclist :");
-        console.log(answer);
         populateDocumentList(answer.documents);
     });
-
-    var editForm = noteEditor.querySelector("form.modifyNote");
+    var editForm = noteEditor.querySelector("#modifyNote");
+    //editForm.title.value = note.title;
     editForm.action = "engine/note/modify.php";
-    editForm.title.value = note.title;
+    editForm.old_title.value = note.title;
     leftButton.innerHTML = feather.icons["chevron-left"].toSvg();
     leftButton.hidden = false;
-    //leftButton.textContent = "Annuler"; // Cancel
     leftButton.onclick = function(event) {
         noteEditor.hidden = true;
         //noteReader.hidden = false;
@@ -279,6 +276,9 @@ function editNote(note) {
     //rightButton.textContent = "Enregistrer"; // Save
     rightButton.innerHTML = feather.icons["save"].toSvg();
     rightButton.onclick = function(event) {
+        // editForm calls modify.php who moves the note to the new title
+        // and relinks all the docs.
+        editForm.title.value = titleInput.value;
         query_engine(editForm, function(answer) {
             noteEditor.hidden = true;
             readNote(answer);
@@ -296,9 +296,9 @@ function editNote(note) {
 }
 
 document.addEventListener("DOMContentLoaded", function(event) {
-    title = $_GET['title'] || "";
+    var title = $_GET['title'] || "";
 
-    var readForm = noteReader.querySelector("form.readNote");
+    var readForm = noteReader.querySelector("#readNote");
     readForm.title.value = title;
 
     query_engine(readForm, readNote);

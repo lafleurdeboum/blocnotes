@@ -32,7 +32,10 @@
         Bloc Notes
       </a>
 
-      <span id="titleSpan"></span>
+      <span id="titleSpan">
+      </span>
+
+      <input id="titleInput" name="title" />
 
       <button type='button' id='leftMostButton' class='btn'>
           + <!-- New -->
@@ -58,11 +61,11 @@
 
     <div id="noteReader" class="container">
 
-      <form action="engine/note/read.php" class="readNote" method="POST">
-        <input name="title" type="hidden" />
+      <form id="readNote" action="engine/note/read.php" method="POST">
+        <input name="title" type="input" hidden />
       </form>
-      <form action="engine/note/delete.php" class="deleteNote" method="POST">
-        <input name="title" type="hidden" />
+      <form id="deleteNote" action="engine/note/delete.php" method="POST">
+        <input name="title" type="input" hidden />
       </form>
 
       <div class="navbar docs-nav">
@@ -77,19 +80,20 @@
       </div>
 
       <form action="engine/document/upload.php" class="dropzone" method="POST">
-        <input name="title" type="hidden" />
+        <input name="title" type="input" hidden />
       </form>
 
-      <form action="engine/note/modify.php" class="modifyNote" method="POST">
-        <input name="title" type="hidden" />
+      <form id="modifyNote" action="engine/note/modify.php" method="POST">
+        <input name="old_title" type="input" hidden />
+        <input name="title" type="input" hidden />
         <textarea name="raw_comment"></textarea>
       </form>
     </div><!-- noteEditor -->
 
     <div id="noteCreator" class="container" hidden>
 
-      <form action="engine/note/create.php" class="createNote" method="POST">
-        <input name="title" type="input" />
+      <form id="createNote" action="engine/note/create.php" method="POST">
+        <input name="title" type="input" hidden />
         <div class="navbar docs-nav editable">
         </div>
         <textarea name="raw_comment"></textarea>
