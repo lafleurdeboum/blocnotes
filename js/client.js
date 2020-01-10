@@ -214,9 +214,19 @@ function readNote(note) {
     populateMenu(note.notes);
 }
 
-function deleteNote(note) {
-    var deleteForm = noteReader.querySelector("#deleteNote");
+function handleFiles(files) {
+    for(var i=0; i < files.length; i++) {
+        var file = files[i];
+        console.log("uploading " + file.name);
+        uploadForm.title.value = file.name.replace(/\.\w+$/, "");
+        query_engine(uploadForm, function(answer) {
+            title = answer.title;
+            readNote(answer);
+        });
+    }
+}
 
+function deleteNote(note) {
     deleteForm.title.value = note.title;
     query_engine(deleteForm, function(answer) {
         populateMenu(answer.notes);
