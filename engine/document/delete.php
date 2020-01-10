@@ -3,29 +3,42 @@
 require_once 'engine.php';
 
 $filename = $_POST["filename"] ?: "";
-
-if(! is_file("$pool/$filename")) {
-  $message = "Il n'y a pas de fichier $filename dans $pool";
-  $messageType = "alert-warning";
-}
+$fileDeleted = false;
+$DBUpdated = false;
 
 load_db();
 
+// DELETE queries return true whatsoever.
 $deleteFailed = $db->querySingle(
   "DELETE FROM documents WHERE filename = '$filename';"
 );
-if($deleteFailed) {
-  $message .= "Le fichier $filename n'a pas pu être oublié";
-  $messageType = "alert-warning";
-  get_document_list();
-  return_answer();
-  return;
+if($deleteFailed != FALSE) {
+  // The call succeeded.
+  $DBUpdated = true;
 }
-if(unlink("$pool/$filename")) {
-  $message = "Le fichier $filename a été supprimé et oublié";
+
+if(is_file("$pool/$filename")) {
+  if(unlink("$pool/$filename")) {
+    $fileDeleted = true;
+  }
 } else {
-  $message = "Le fichier $filename est oublié, mais existe encore dans $pool";
+  $message = "Il n'y avait pas de fichier $filename dans $pool";
+  $messageType = "alert-warning";
 }
+
+if($DBUpdated) {
+  if($fileDeleted) {
+    $message .= " le fichier $filename a été supprimé et oublié";
+  } else {
+  $message .= " le fichier $filename a été oublié";  
+  }
+} else if($fileDeleted) {
+  $message .= " le fichier $filename a été supprimé";
+} else {
+  $message .= " le fichier $filename n'a pas pu etre supprimé ni oublié";
+  $messageType = "alert-warning";
+}
+
 
 $title = "";
 get_document_list();
