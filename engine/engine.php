@@ -37,16 +37,21 @@ set_error_handler(function($errno, $errstr, $errfile, $errline){
 function load_db() {
   global $db, $dbFile, $workDir, $message, $messageType;
 
-  if (! extension_loaded('sqlite3')) {
+  $dbFileRights = substr(sprintf('%o', fileperms('/tmp')), -4);
+  if(! $dbFileRights == "1777") {
     $messageType = "alert-warning";
-    $message = "Pas de support sqlite3 ! <br />Pas d'Accès à la base de données <b>$dbFile</b>";
-  } else {
+    $message = "La base de données n'est pas accessible en écriture";
+  }
+  if(extension_loaded('sqlite3')) {
     try {
       $db = new SQLite3("$workDir/$dbFile");
     } catch(Throwable $err) {
       $messageType = "alert-danger";
       $message = $err.message;
     }
+  } else {
+    $messageType = "alert-warning";
+    $message = "Pas de support sqlite3 ! <br />Pas d'Accès à la base de données <b>$dbFile</b>";
   }
 }
 
