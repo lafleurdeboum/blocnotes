@@ -9,7 +9,18 @@ $note_exists = $db->querySingle(
 );
 if($note_exists) {
   try {
-    $result = $db->exec("DELETE FROM notes WHERE title = '$title';");
+    $db->exec("DELETE FROM notes WHERE title = '$title';");
+    $linkedFiles = $db->query(
+      "SELECT filename, attached_notes FROM documents WHERE instr(attached_notes, '$title');"
+    );
+    while ($row = $linkedFiles->fetchArray()) {
+      $filename = $row[0];
+      $attachedNotes = $row[1];
+      $newAttachedNotes = preg_replace("/$title,/", "", $attachedNotes);
+      $db->querySingle(
+        "UPDATE documents SET attached_notes = '" . $newAttachedNotes . "' WHERE filename = '$filename';"
+      );
+    }
     $message = "Note <b>$title</b> supprimée";
     $title = "";
   } catch(Throwable $err) {
