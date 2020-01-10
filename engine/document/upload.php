@@ -12,7 +12,7 @@ if (move_uploaded_file($_FILES['file']['tmp_name'], $pool . "/" . $uploadFile)) 
   $type = mime_content_type($pool . "/" . $uploadFile);
   $message = "Fichier <b>$uploadFile</b> ajouté à $pool, type $type, attaché au titre '$title'.";
   $result = $db->exec(
-      "INSERT OR REPLACE INTO documents (filename, filetype, attached_notes) VALUES ('$uploadFile', '$type', '$title');"
+      "INSERT OR REPLACE INTO documents (filename, filetype, attached_notes) VALUES ('$uploadFile', '$type', '$title,');"
   );
   if (!$result) { $message .= " - non enregistré dans la DB"; }
 } else {
