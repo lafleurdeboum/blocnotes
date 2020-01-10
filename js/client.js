@@ -169,8 +169,7 @@ function messageUser(message, messageType) {
 
 function readNote(note) {
     // TODO Move some to an initialize function to be used in general.
-    var readForm = noteReader.querySelector("#readNote");
-    var contentField = noteEditor.querySelector("#modifyNote textarea");
+    var contentField = noteEditor.querySelector("#modifyForm textarea");
     var contentHolder = noteReader.querySelector("div.contentHolder");
 
     readForm.title.value = note.title;
@@ -189,13 +188,19 @@ function readNote(note) {
 
     //leftMostButton.innerHTML = feather.icons["file-plus"].toSvg();
     leftMostButton.innerHTML = feather.icons["plus-square"].toSvg();
+    uploadInput.onchange = function(event) {
+        handleFiles(uploadInput.files);
+    };
     leftMostButton.onclick = function(event) {
         noteReader.hidden = true;
+        uploadInput.click();
+        /*
+
         createNote(note);
-    }
+        */
+    };
 
     if(note.title) {
-        var titleSpan = document.querySelector("#titleSpan");
         titleSpan.innerHTML = note.title;
         titleSpan.hidden = false;
         leftMostButton.hidden = true;
@@ -223,7 +228,6 @@ function createNote(note) {
     titleInput.placeholder = "Nouvelle note";
     titleInput.hidden = false;
     titleSpan.hidden = true;
-    var createForm = noteCreator.querySelector("#createNote");
     createForm.raw_comment.textContent = "";
 
     rightButton.innerHTML = feather.icons["save"].toSvg();
@@ -252,34 +256,31 @@ function editNote(note) {
     titleInput.hidden = false;
     titleSpan.hidden = true;
 
+    modifyForm.old_title.value = note.title;
+
     var uploadForm = noteEditor.querySelector("form.dropzone");
     // uploaded file will be linked to note. If the note name changes they are
     // relinked.
     uploadForm.title.value = titleInput.value;
     uploadForm.dropzone.on('complete', function(event) {
         const answer = JSON.parse(event.xhr.response);
-        console.log("adding documents to doclist :");
+        console.log("adding documents to doclist : ");
         populateDocumentList(answer.documents);
     });
-    var editForm = noteEditor.querySelector("#modifyNote");
-    //editForm.title.value = note.title;
-    editForm.action = "engine/note/modify.php";
-    editForm.old_title.value = note.title;
     leftButton.innerHTML = feather.icons["chevron-left"].toSvg();
     leftButton.hidden = false;
     leftButton.onclick = function(event) {
         noteEditor.hidden = true;
-        //noteReader.hidden = false;
         // DEBUG here we need to load view, not initialize it
         readNote(note);
     }
-    //rightButton.textContent = "Enregistrer"; // Save
     rightButton.innerHTML = feather.icons["save"].toSvg();
     rightButton.onclick = function(event) {
-        // editForm calls modify.php who moves the note to the new title
+        leftMostButton.onclick = null;
+        // modifyForm calls modify.php who moves the note to the new title
         // and relinks all the docs.
-        editForm.title.value = titleInput.value;
-        query_engine(editForm, function(answer) {
+        modifyForm.title.value = titleInput.value;
+        query_engine(modifyForm, function(answer) {
             noteEditor.hidden = true;
             readNote(answer);
         });
@@ -298,7 +299,6 @@ function editNote(note) {
 document.addEventListener("DOMContentLoaded", function(event) {
     var title = $_GET['title'] || "";
 
-    var readForm = noteReader.querySelector("#readNote");
     readForm.title.value = title;
 
     query_engine(readForm, readNote);
