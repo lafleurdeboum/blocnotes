@@ -37,8 +37,8 @@ set_error_handler(function($errno, $errstr, $errfile, $errline){
 function load_db() {
   global $db, $dbFile, $workDir, $message, $messageType;
 
-  $dbFileRights = substr(sprintf('%o', fileperms('/tmp')), -4);
-  if(! $dbFileRights == "1777") {
+  $dbFileRights = substr(sprintf('%o', fileperms("$workDir/$dbFile")), -4);
+  if($dbFileRights != "0666") {
     $messageType = "alert-warning";
     $message = "La base de données n'est pas accessible en écriture";
   }
