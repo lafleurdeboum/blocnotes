@@ -7,16 +7,14 @@ $comment_exists = $db->querySingle(
   "SELECT EXISTS(SELECT comment FROM notes WHERE title = '$title');"
 );
 if(! $comment_exists) {
-  $messageType = "alert-danger";
-  $message = "Le commentaire pour le titre <b>$title</b> n'existe pas";
+  array_push($messages, array("Le commentaire pour le titre <b>$title</b> n'existe pas", "alert-danger"));
   $title = "";
 } else {
   $raw_comment = $db->querySingle(
       "SELECT comment FROM notes WHERE title = '$title';"
   );
   if($raw_comment == "") {
-    $messageType = "alert-success";
-    $message = "Note vide";
+    array_push($messages, array("Note vide"));
   }
 }
 

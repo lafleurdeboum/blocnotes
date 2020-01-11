@@ -18,8 +18,7 @@ $raw_comment = $_POST["raw_comment"] ?: "";
 $comment = "";
 $noteList = array();
 $documents = array();
-$message = null;
-$messageType = null;
+$messages = array();
 $returnObject = array();
 
 // Let php warnings become errors so as to catch sqlite errors :
@@ -35,28 +34,25 @@ set_error_handler(function($errno, $errstr, $errfile, $errline){
 
 
 function load_db() {
-  global $db, $dbFile, $workDir, $message, $messageType;
+  global $db, $dbFile, $workDir, $messages;
 
   $dbFileRights = substr(sprintf('%o', fileperms("$workDir/$dbFile")), -4);
   if($dbFileRights != "0666") {
-    $messageType = "alert-warning";
-    $message = "La base de données n'est pas accessible en écriture";
+    array_push($messages, array("La base de données n'est pas accessible en écriture", "alert-warning"));
   }
   if(extension_loaded('sqlite3')) {
     try {
       $db = new SQLite3("$workDir/$dbFile");
     } catch(Throwable $err) {
-      $messageType = "alert-danger";
-      $message = $err.message;
+      array_push($messages, array($err.message, "alert-danger"));
     }
   } else {
-    $messageType = "alert-warning";
-    $message = "Pas de support sqlite3 ! <br />Pas d'Accès à la base de données <b>$dbFile</b>";
+    array_push($messages, array("Pas de support sqlite3 ! <br />Pas d'Accès à la base de données <b>$dbFile</b>", "alert-warning"));
   }
 }
 
 function md2html() {
-  global $comment, $raw_comment, $message, $messageType;
+  global $comment, $raw_comment, $messages;
   // Turn comment into html using markdown :
   if($raw_comment == "") {
     $comment = "";
@@ -82,12 +78,11 @@ function md2html() {
 }
 
 function get_note_list() {
-  global $db, $noteList;
+  global $db, $noteList, $messages;
   try {
     $notes = $db->query("SELECT title FROM notes;");
   } catch(Throwable $err) {
-    $messageType = "alert-danger";
-    $message = $err.message;
+    array_push($messages, array($err.message, "alert-danger"));
   }
   if ($notes) {
     while ($note = $notes->fetchArray()) {
@@ -123,14 +118,13 @@ function get_document_list() {
 }
 
 function return_answer() {
-  global $title, $comment, $raw_comment, $documents, $message, $messageType, $noteList;
+  global $title, $comment, $raw_comment, $documents, $messages, $noteList;
 
-  // message, messageType, notes and documents may be empty strings/arrays.
+  // messages, notes and documents may be empty arrays.
   $returnObject["title"] = $title;
   $returnObject["raw_comment"] = $raw_comment;
   $returnObject["comment"] = $comment;
-  $returnObject["message"] = $message;
-  $returnObject["messageType"] = $messageType;
+  $returnObject["messages"] = $messages;
   $returnObject["notes"] = $noteList;
   $returnObject["documents"] = $documents;
 

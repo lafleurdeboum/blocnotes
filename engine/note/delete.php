@@ -21,15 +21,13 @@ if($note_exists) {
         "UPDATE documents SET attached_notes = '" . $newAttachedNotes . "' WHERE filename = '$filename';"
       );
     }
-    $message = "Note <b>$title</b> supprimée";
+    array_push($messages, array("Note <b>$title</b> supprimée", "alert-success"));
     $title = "";
   } catch(Throwable $err) {
-    $message = $err.message;
-    $messageType = "alert-danger";
+    array_push($messages, array($err.message, "alert-danger"));
   }
 } else {
-  $message = "La note $title n'existe pas";
-  $messageType = "alert-warning";
+  array_push($messages, array("La note $title n'existe pas", "alert-warning"));
 }
 
 require_once 'read.php';

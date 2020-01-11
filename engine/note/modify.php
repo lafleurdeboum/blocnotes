@@ -18,10 +18,9 @@ if($note_exists) {
     $db->querySingle(
         "UPDATE notes SET comment = '" . SQLite3::escapeString($raw_comment) . "' WHERE title = '$old_title';"
     );
-    $message = "Commentaire mis à jour";
+    array_push($messages, array("Commentaire mis à jour"));
   } catch(Throwable $err) {
-    $messageType = "alert-danger";
-    $message = $err.message;
+    array_push($messages, array($err.message, "alert-danger"));
   }
   if($old_title != $title) {
     $new_note_exists = $db->querySingle(
@@ -43,20 +42,17 @@ if($note_exists) {
               "UPDATE documents SET attached_notes = '$newAttachedNotes' WHERE filename = '$filename'"
           );
         }
-        $message = "Note déplacée ; document reliés";
+        array_push($messages, array("Note déplacée ; document reliés", "alert-success"));
       } catch(Throwable $err) {
-        $messageType = "alert-danger";
-        $message = $err.message;
+        array_push($messages, array($err.message, "alert-danger"));
       }
     } else {
-      $messageType = "alert-danger";
-      $message = "La note <b>$title</b> existe déjà";
+      array_push($messages, array("La note <b>$title</b> existe déjà", "alert-danger"));
       $title = "";
     }
   }
 } else {
-  $messageType = "alert-danger";
-  $message = "La note <b>$old_title</b> n'existe pas";
+  array_push($messages, array("La note <b>$old_title</b> n'existe pas", "alert-danger"));
   $title = "";
 }
 

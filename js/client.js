@@ -8,10 +8,8 @@ for (var i=0; i<args.length; ++i) {
 }
 
 function query_engine(form, callback) {
-    //form.title.value = title;
     //form.action = "engine/echo.php";
     if(form.action.search("delete.php") != -1) {
-        // Confirm deletion :
         target = form.title ? form.title.value : form.filename.value;
         if(! confirm("Voulez-vous vraiment supprimer " + target + " ?")) {
             return false;
@@ -24,9 +22,13 @@ function query_engine(form, callback) {
         var answer = null;
         try {
             answer = JSON.parse(event.target.responseText);
-            if (answer.message) {
-                messageUser(answer.message, answer.messageType);
-            }
+            answer.messages.forEach(function(message) {
+                if(message.length == 1) {
+                    messageUser(message[0], "alert-info", 4000);
+                } else {
+                    messageUser(message[0], message[1], 4000);
+                }
+            });
         } catch (err) {
             messageUser("Réponse de l'engin non valide :", "alert-danger");
             messageUser(event.target.responseText, "alert-danger", timeout=0);
@@ -233,7 +235,6 @@ function handleFiles(files) {
         query_engine(uploadForm, function(answer) {
             title = answer.title;
             readNote(answer);
-            messageUser("<b>" + file.name + "</b> uploaded", "alert-success");
             console.log(file.name + " uploaded");
         });
     }
