@@ -162,15 +162,16 @@ function messageUser(message, messageType) {
     messageDiv.innerHTML = message;
     messageDiv.classList.add("alert",
                              messageType,
-                             "alert-dismissible",
                              "fade",
                              "show");
     messageDiv.role = "alert"; // TODO check this attribute
-    navStart.appendChild(messageDiv);
+    main.appendChild(messageDiv);
     //mainWindow.prepend(messageDiv); // DEBUG fails on older browsers
     setTimeout(function() {
-        navStart.removeChild(messageDiv);
+        main.removeChild(messageDiv);
     }, 3000);
+    /*
+    */
     console.log(messageType + " : " + message);
 }
 

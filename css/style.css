@@ -25,12 +25,20 @@ pre {
 -webkit-media-controls-panel {
   max-width: 50px;
 }
+.alert.show {
+    position: fixed;
+    bottom: 100px;
+    right: 0;
+}
 
 body {
-  color: white;
-  background-color: black;
+  display: flex;
+  flex-direction: column;
   box-sizing: border-box;
   margin: 0;
+  color: white;
+  background-color: black;
+}
 #titleInput {
     flex-grow: 1;
     align-self: normal;
@@ -69,6 +77,8 @@ nav div.alert {
 }
 
 #main {
+  display: flex;
+  flex-direction: column;
   padding: 1em;
 }
 form {
