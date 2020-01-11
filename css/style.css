@@ -31,17 +31,24 @@ body {
   background-color: black;
   box-sizing: border-box;
   margin: 0;
+#titleInput {
+    flex-grow: 1;
+    align-self: normal;
 }
 #titleSpan {
     align-self: center;
 }
+@media (max-width: 576px) {
+  #titleInput, #titleSpan {
+    order: 1;
+    width: 100%;
+  }
+}
 nav {
-  flex-wrap: nowrap;
-  min-height: 4.2em;
+  align-items: start !important;
 }
 nav > span {
   display: flex;
-  align-items: center;
 }
 nav div.alert {
     margin-bottom: 0;
@@ -52,16 +59,6 @@ nav div.alert {
   display: block;
   columns: 10em 5;
   padding: 2em;
-}
-.navbar-toggler {
-  color: white !important;
-  border-color: transparent !important;
-}
-.navbar-start {
-  max-width: 100%;
-}
-.navbar-start input {
-  overflow: hidden;
 }
 .notes-nav {
     display: flex;
