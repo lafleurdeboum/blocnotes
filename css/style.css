@@ -41,10 +41,6 @@ body {
 }
 #titleInput {
     flex-grow: 1;
-    align-self: normal;
-}
-#titleSpan {
-    align-self: center;
 }
 @media (max-width: 576px) {
   #titleInput, #titleSpan {
@@ -52,11 +48,14 @@ body {
     width: 100%;
   }
 }
-nav {
-  align-items: start !important;
+nav, nav > * {
+  align-items: baseline !important;
 }
-nav > span {
-  display: flex;
+nav .buttons {
+    display: flex;
+}
+nav form {
+  display: inline-flex;
 }
 nav div.alert {
     margin-bottom: 0;
@@ -80,9 +79,6 @@ nav div.alert {
   display: flex;
   flex-direction: column;
   padding: 1em;
-}
-form {
-  display: inline;
 }
 form textarea {
   width: 100%;
