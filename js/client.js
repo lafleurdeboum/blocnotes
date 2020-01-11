@@ -228,11 +228,13 @@ function readNote(note) {
 function handleFiles(files) {
     for(var i=0; i < files.length; i++) {
         var file = files[i];
-        console.log("uploading " + file.name);
+        messageUser("uploading <b>" + file.name + "</b> ...");
         uploadForm.title.value = file.name.replace(/\.\w+$/, "");
         query_engine(uploadForm, function(answer) {
             title = answer.title;
             readNote(answer);
+            messageUser("<b>" + file.name + "</b> uploaded", "alert-success");
+            console.log(file.name + " uploaded");
         });
     }
 }
