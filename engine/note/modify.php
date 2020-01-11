@@ -1,5 +1,4 @@
 <?php
-// Les photos suivent mais pas le commentaire.
 require_once 'engine.php';
 
 if(array_key_exists("old_title", $_POST)) {
