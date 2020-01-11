@@ -24,17 +24,12 @@ function query_engine(form, callback) {
         var answer = null;
         try {
             answer = JSON.parse(event.target.responseText);
-        } catch (err) {
-            answer = Array();
-            answer.message = "L'engin n'a pas répondu";
-            answer.messageType = "alert-warning";
-        }
-        if (answer.message) {
-            if (answer.messageType) {
+            if (answer.message) {
                 messageUser(answer.message, answer.messageType);
-            } else {
-                messageUser(answer.message, "alert-success");
             }
+        } catch (err) {
+            messageUser("Réponse de l'engin non valide :", "alert-danger");
+            messageUser(event.target.responseText, "alert-danger", timeout=0);
         }
         callback(answer);
     });
@@ -154,24 +149,33 @@ function populateDocumentList(documents) {
     }
 }
 
-function messageUser(message, messageType) {
-    //var mainWindow = document.getElementById("main");
-    var navStart = nav.querySelector("span");
+function messageUser(message, messageType, timeout) {
     var messageDiv = document.createElement("div");
 
+    if (! messageType) {
+        messageType = "alert-info";
+    }
     messageDiv.innerHTML = message;
     messageDiv.classList.add("alert",
                              messageType,
                              "fade",
                              "show");
     messageDiv.role = "alert"; // TODO check this attribute
-    main.appendChild(messageDiv);
-    //mainWindow.prepend(messageDiv); // DEBUG fails on older browsers
-    setTimeout(function() {
-        main.removeChild(messageDiv);
-    }, 3000);
-    /*
-    */
+    if(timeout || timeout != 0) {
+        if(! timeout) { timeout = 3000; }
+        setTimeout(function() {
+            messager.removeChild(messageDiv);
+        }, timeout);
+    } else {
+        closeSpan = document.createElement("span");
+        closeSpan.classList.add("closeButton");
+        closeSpan.innerHTML = feather.icons["x-circle"].toSvg();
+        closeSpan.onclick = function() {
+            messager.removeChild(messageDiv);
+        }
+        messageDiv.appendChild(closeSpan);
+    }
+    messager.appendChild(messageDiv);
     console.log(messageType + " : " + message);
 }
 

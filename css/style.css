@@ -7,12 +7,6 @@ pre {
   font-size: large;
   font-weight: bold;
 }
-#player {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-}
 .btn {
     color: white;
     display: inline-flex;
@@ -25,10 +19,30 @@ pre {
 -webkit-media-controls-panel {
   max-width: 50px;
 }
-.alert.show {
+#player {
     position: fixed;
-    bottom: 100px;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+#messager {
+    display: flex;
+    flex-direction: column;
+    flex-flow: reverse;
+    position: fixed;
+    bottom: 10vh;
     right: 0;
+    max-width: 80vw;
+    max-height: 80vh;
+}
+.alert.show {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.alert .closeButton {
+    position: absolute;
+    top: 5px;
+    right: 5px;
 }
 
 body {
