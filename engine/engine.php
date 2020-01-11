@@ -4,8 +4,8 @@ require_once 'Markdown/Markdown.inc.php';
 use Michelf\Markdown;
 
 $db = null;
-//$dbFile = "admin/notes.db";
-$dbFile = "admin/rara.db";
+$dbFile = "admin/notes.db";
+//$dbFile = "admin/rara.db";
 // Presume both db and engine commands live in "$ProgramRoot/engine" :
 $workDir = preg_split("#/engine/#", getcwd())[0];
 // Presume documents upload dir location :
