@@ -10,6 +10,13 @@ for (var i=0; i<args.length; ++i) {
 function query_engine(form, callback) {
     //form.title.value = title;
     //form.action = "engine/echo.php";
+    if(form.action.search("delete.php") != -1) {
+        // Confirm deletion :
+        target = form.title ? form.title.value : form.filename.value;
+        if(! confirm("Voulez-vous vraiment supprimer " + target + " ?")) {
+            return false;
+        }
+    }
     const XHR = new XMLHttpRequest();
     const FD = new FormData(form);
     
