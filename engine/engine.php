@@ -101,11 +101,11 @@ function get_document_list() {
   try {
     if($title == "") {
         $documentQuery = $db->query(
-            "SELECT filename, filetype FROM documents WHERE attached_notes = '';"
+            "SELECT filename, filetype FROM documents WHERE attached_notes = ',';"
         );
     } else {
       $documentQuery = $db->query(
-          "SELECT filename, filetype FROM documents WHERE instr(attached_notes, '$title');"
+          "SELECT filename, filetype FROM documents WHERE instr(attached_notes, ',$title,');"
       );
     }
   } catch(Throwable $err) {
