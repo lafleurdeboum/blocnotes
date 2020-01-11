@@ -53,8 +53,9 @@ nav div.alert {
   columns: 10em 5;
   padding: 2em;
 }
-.navbar-dark .navbar-nav .nav-link {
-  color: rgba(255, 255, 255, 0.8);
+.navbar-toggler {
+  color: white !important;
+  border-color: transparent !important;
 }
 .notes-nav {
   justify-content: start;
@@ -65,6 +66,9 @@ nav div.alert {
 
 #main {
   padding: 1em;
+}
+form {
+  display: inline;
 }
 form textarea {
   width: 100%;
