@@ -194,18 +194,17 @@ function readNote(note) {
     leftMostButton.onclick = function(event) {
         noteReader.hidden = true;
         uploadInput.click();
-        /*
-
-        createNote(note);
-        */
     };
 
+    var noteNav = noteReader.querySelector('.notes-nav');
     if(note.title) {
         titleSpan.innerHTML = note.title;
         titleSpan.hidden = false;
         leftMostButton.hidden = true;
+        noteNav.hidden = true;
     } else {
         leftMostButton.hidden = false;
+        noteNav.hidden = false;
     }
 
     noteReader.hidden = false;

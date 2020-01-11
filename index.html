@@ -22,10 +22,10 @@
 </head>
 <body>
   
-  <nav class="navbar navbar-dark bg-dark" id="nav">
+  <nav class="navbar navbar-dark bg-dark navbar-expand-sm" id="nav">
 
     <span class="navbar-start">
-      <button class="btn" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
         <i data-feather="list"></i>
       </button>
       <a class='navbar-brand' href='.'>
@@ -37,26 +37,23 @@
 
       <input id="titleInput" name="title" />
 
-      <form id="uploadForm" action="engine/note/createFromDoc.php" method="POST">
-        <input name="title" hidden />
-        <input id="uploadInput" name="filename" type="file" style="display: none;" />
-        <button type='button' id='leftMostButton' class='btn'>
-          + <!-- New -->
-        </button>
-      </form>
-    </span>
-
-    <span class="navbar-end">
-      <button type="button" id="leftButton" class="btn" hidden>
-      </button>
-      <button type="button" id="rightButton" class="btn">
-        Modifier
-      </button>
     </span>
 
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-      <div class="navbar notes-nav">
-      </div>
+      <span class="navbar-end ml-auto">
+        <form id="uploadForm" action="engine/note/createFromDoc.php" method="POST">
+          <input name="title" hidden />
+          <input id="uploadInput" name="filename" type="file" style="display: none;" />
+          <button type='button' id='leftMostButton' class='btn'>
+            + <!-- New -->
+          </button>
+        </form>
+        <button type="button" id="leftButton" class="btn" hidden>
+        </button>
+        <button type="button" id="rightButton" class="btn">
+          Modifier
+        </button>
+      </span>
     </div>
 
   </nav>
@@ -68,13 +65,11 @@
       <form id="readForm" action="engine/note/read.php" method="POST">
         <input name="title" type="input" hidden />
       </form>
-      <form id="deleteForm" action="engine/note/delete.php" method="POST">
-        <input name="title" type="input" hidden />
-      </form>
-
       <div class="navbar docs-nav">
       </div>
       <div class="contentHolder">
+      </div>
+      <div class="notes-nav">
       </div>
     </div><!-- noteReader -->
 
@@ -92,6 +87,10 @@
         <input name="title" type="input" hidden />
         <textarea name="raw_comment"></textarea>
       </form>
+      <form id="deleteForm" action="engine/note/delete.php" method="POST">
+        <input name="title" type="input" hidden />
+      </form>
+
     </div><!-- noteEditor -->
 
     <div id="noteCreator" class="container" hidden>
