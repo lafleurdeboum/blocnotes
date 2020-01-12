@@ -94,8 +94,24 @@ nav div.alert {
   flex-direction: column;
   padding: 1em;
 }
+.docList {
+    display: flex;
+    align-items: center;
+}
 .docs-nav {
   justify-content: flex-start;
+}
+.docs-nav .nav-item {
+  border: solid grey;
+  border-radius: 1em;
+  margin: 5px;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+.docs-nav .nav-item > * {
+    padding: 0.5em;
 }
 #noteReader .contentHolder {
   display: flex;

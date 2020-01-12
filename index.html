@@ -61,15 +61,17 @@
 
     <div id="noteEditor" class="container flex-grow-1" hidden>
 
-      <span class="navbar docs-nav editable">
-      </span>
+      <span class="container docList">
+        <span class="navbar docs-nav editable">
+        </span>
 
-      <form id="uploadForm" action="engine/document/upload.php" method="POST">
-        <input name="title" type="hidden" />
-        <input id="uploadInput" name="filename" type="file" style="display: none;" />
-        <button id="uploadButton" type='button' class='btn'>
-        </button>
-      </form>
+        <form id="uploadForm" action="engine/document/upload.php" method="POST">
+          <input name="title" type="hidden" />
+          <input id="uploadInput" name="filename" type="file" style="display: none;" />
+          <button id="uploadButton" type='button' class='btn'>
+          </button>
+        </form>
+      </span><!-- docList -->
 
       <form id="modifyForm" action="engine/note/modify.php" method="POST">
         <input name="old_title" type="input" hidden />
