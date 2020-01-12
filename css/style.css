@@ -28,7 +28,6 @@ pre {
 #messager {
     display: flex;
     flex-direction: column;
-    flex-flow: reverse;
     position: fixed;
     bottom: 10vh;
     right: 0;
