@@ -20,20 +20,20 @@
         Bloc Notes
       </a>
 
+      <form id="uploadCreateForm" action="engine/note/createFromDoc.php" method="POST">
+        <input name="title" hidden />
+        <input id="uploadCreateInput" name="filename" type="file" style="display: none;" />
+        <button id='leftMostButton' type='button' class='btn mr-3'>
+          + <!-- New -->
+        </button>
+      </form>
+
       <span id="titleSpan">
       </span>
 
       <input id="titleInput" name="title" />
 
       <span class="buttons ml-auto">
-        <form id="uploadCreateForm" action="engine/note/createFromDoc.php" method="POST">
-          <input name="title" hidden />
-          <input id="uploadCreateInput" name="filename" type="file" style="display: none;" />
-          <button id='leftMostButton' type='button' class='btn mr-3'>
-            + <!-- New -->
-          </button>
-        </form>
-
         <button type="button" id="leftButton" class="btn ml-auto" hidden>
         </button>
 
