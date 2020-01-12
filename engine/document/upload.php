@@ -4,21 +4,25 @@ require_once 'engine.php';
 
 load_db();
 
-//$uploadFile = basename($_FILES['userfile']['name']);
-$uploadFile = basename($_FILES['file']['name']);
+$uploadFile = basename($_FILES['filename']['name']);
 
-//if (move_uploaded_file($_FILES['userfile']['tmp_name'], $pool . $uploadFile)) {
-if (move_uploaded_file($_FILES['file']['tmp_name'], $pool . "/" . $uploadFile)) {
-  $type = mime_content_type($pool . "/" . $uploadFile);
-  $message = "Fichier <b>$uploadFile</b> ajouté à $pool, type $type, attaché au titre '$title'.";
-  $result = $db->exec(
-      "INSERT OR REPLACE INTO documents (filename, filetype, attached_notes) VALUES ('$uploadFile', '$type', '$title,');"
-  );
-  if (!$result) { $message .= " - non enregistré dans la DB"; }
+if(is_file($pool . "/" . $uploadFile)) {
+  array_push($messages, array("Le fichier $uploadFile existe déjà", "alert-danger"));
+  $title = "";
 } else {
-  $messageType = "alert-warning";
-  $message = "Le fichier <b>$uploadFile</b> n'a pas pu être ajouté.
-      Vérifiez les permissions sur le dossier.";
+  if (move_uploaded_file($_FILES['filename']['tmp_name'], $pool . "/" . $uploadFile)) {
+    $type = mime_content_type($pool . "/" . $uploadFile);
+    $result = $db->exec(
+        "INSERT OR REPLACE INTO documents (filename, filetype, attached_notes) VALUES ('$uploadFile', '$type', ',$title,');"
+    );
+    if ($result) { 
+      array_push($messages, array("Fichier <b>$uploadFile</b> ajouté", "alert-success"));
+    } else {
+      array_push($messages, array("Le fichier <b>$uploadFile</b> n'a pas pu être ajouté à la base de données", "alert-danger"));
+    }
+  } else {
+    array_push($messages, array("Le fichier <b>$uploadFile</b> n'a pas pu être copié dans <b>$pool</b>. Vérifiez les permissions sur le dossier", "alert-danger"));
+  }
 }
 
 get_document_list();

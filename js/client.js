@@ -85,7 +85,7 @@ function togglePlay(file, event) {
     }
 }
 
-function populateDocumentList(documents) {
+function populateDocumentList(documents, noteTitle) {
     var docDivs = document.querySelectorAll(".docs-nav");
     for(var i=0; i < docDivs.length; i++) {
         var docDiv = docDivs[i];
@@ -127,17 +127,20 @@ function populateDocumentList(documents) {
                 deleteDocForm.method = "post";
                 deleteDocForm.hidden = true;
                 deleteDocForm.classList.add("deleteDocument");
+                var noteTitleInput = document.createElement("input");
+                noteTitleInput.name = "title";
+                noteTitleInput.value = noteTitle;
+                deleteDocForm.appendChild(noteTitleInput);
                 var filenameInput = document.createElement("input");
                 filenameInput.name = "filename";
                 filenameInput.value = fileinfo.filename;
-                filenameInput.type = "hidden";
                 deleteDocForm.appendChild(filenameInput);
                 var deleteButton = document.createElement("button");
                 deleteButton.innerHTML = feather.icons["trash-2"].toSvg();
                 deleteButton.classList.add("btn");
                 deleteButton.onclick = function(event) {
                     query_engine(deleteDocForm, function(answer) {
-                        populateDocumentList(answer.documents);
+                        populateDocumentList(answer.documents, answer.title);
                     });
                 };
                 link.appendChild(deleteDocForm);
@@ -200,14 +203,23 @@ function readNote(note) {
 
     leftButton.hidden = true;
 
-    //leftMostButton.innerHTML = feather.icons["file-plus"].toSvg();
-    leftMostButton.innerHTML = feather.icons["plus-square"].toSvg();
-    uploadInput.onchange = function(event) {
-        handleFiles(uploadInput.files);
+    //leftMostButton.innerHTML = feather.icons["plus-square"].toSvg();
+    leftMostButton.innerHTML = feather.icons["file-plus"].toSvg();
+    uploadCreateInput.onchange = function(event) {
+        for(var i=0; i < uploadCreateInput.files.length; i++) {
+            var file = uploadCreateInput.files[i];
+            messageUser("uploading <b>" + file.name + "</b> ...");
+            uploadCreateForm.title.value = file.name.replace(/\.\w+$/, "");
+            query_engine(uploadCreateForm, function(answer) {
+                title = answer.title;
+                readNote(answer);
+                console.log(file.name + " uploaded");
+            });
+        };
     };
     leftMostButton.onclick = function(event) {
-        noteReader.hidden = true;
-        uploadInput.click();
+        //noteReader.hidden = true;
+        uploadCreateInput.click();
     };
 
     var noteNav = noteReader.querySelector('.notes-nav');
@@ -223,21 +235,8 @@ function readNote(note) {
 
     noteReader.hidden = false;
     feather.replace();
-    populateDocumentList(note.documents);
+    populateDocumentList(note.documents, note.title);
     populateMenu(note.notes);
-}
-
-function handleFiles(files) {
-    for(var i=0; i < files.length; i++) {
-        var file = files[i];
-        messageUser("uploading <b>" + file.name + "</b> ...");
-        uploadForm.title.value = file.name.replace(/\.\w+$/, "");
-        query_engine(uploadForm, function(answer) {
-            title = answer.title;
-            readNote(answer);
-            console.log(file.name + " uploaded");
-        });
-    }
 }
 
 function deleteNote(note) {
@@ -282,15 +281,23 @@ function editNote(note) {
 
     modifyForm.old_title.value = note.title;
 
-    var uploadForm = noteEditor.querySelector("form.dropzone");
     // uploaded file will be linked to note. If the note name changes they are
     // relinked.
-    uploadForm.title.value = titleInput.value;
-    uploadForm.dropzone.on('complete', function(event) {
-        const answer = JSON.parse(event.xhr.response);
-        console.log("adding documents to doclist : ");
-        populateDocumentList(answer.documents);
-    });
+    uploadInput.onchange = function() {
+        for(var i=0; i < uploadInput.files.length; i++) {
+            var file = uploadInput.files[i];
+            messageUser("uploading <b>" + file.name + "</b> ...");
+            uploadForm.title.value = note.title;
+            query_engine(uploadForm, function(answer) {
+                console.log(file.name + " uploaded");
+                populateDocumentList(answer.documents, answer.title);
+            });
+        }
+    };
+    uploadButton.innerHTML = feather.icons["upload"].toSvg();
+    uploadButton.onclick = function() {
+        uploadInput.click();
+    }
     leftButton.innerHTML = feather.icons["chevron-left"].toSvg();
     leftButton.hidden = false;
     leftButton.onclick = function(event) {
@@ -315,8 +322,6 @@ function editNote(note) {
         deleteNote(note);
     }
     leftMostButton.hidden = false;
-    dropzoneMessage = document.querySelector(".dz-message");
-    dropzoneMessage.innerHTML = feather.icons['upload'].toSvg();
     noteEditor.hidden = false;
 }
 

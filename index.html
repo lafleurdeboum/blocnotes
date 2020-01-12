@@ -10,7 +10,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
   <link rel="stylesheet" href="css/bootstrap.min.css" />
-  <link rel="stylesheet" type="text/css" href="css/dropzone.css" />
   <link rel="stylesheet" type="text/css" href="css/style.css" />
 </head>
 <body>
@@ -27,10 +26,10 @@
       <input id="titleInput" name="title" />
 
       <span class="buttons ml-auto">
-        <form id="uploadForm" action="engine/note/createFromDoc.php" method="POST">
+        <form id="uploadCreateForm" action="engine/note/createFromDoc.php" method="POST">
           <input name="title" hidden />
-          <input id="uploadInput" name="filename" type="file" style="display: none;" />
-          <button type='button' id='leftMostButton' class='btn mr-3'>
+          <input id="uploadCreateInput" name="filename" type="file" style="display: none;" />
+          <button id='leftMostButton' type='button' class='btn mr-3'>
             + <!-- New -->
           </button>
         </form>
@@ -60,13 +59,16 @@
       </div>
     </div><!-- noteReader -->
 
-    <div id="noteEditor" class="container" hidden>
+    <div id="noteEditor" class="container flex-grow-1" hidden>
 
-      <div class="navbar docs-nav editable">
-      </div>
+      <span class="navbar docs-nav editable">
+      </span>
 
-      <form action="engine/document/upload.php" class="dropzone" method="POST">
-        <input name="title" type="input" hidden />
+      <form id="uploadForm" action="engine/document/upload.php" method="POST">
+        <input name="title" type="hidden" />
+        <input id="uploadInput" name="filename" type="file" style="display: none;" />
+        <button id="uploadButton" type='button' class='btn'>
+        </button>
       </form>
 
       <form id="modifyForm" action="engine/note/modify.php" method="POST">
@@ -110,7 +112,6 @@
   <!--
   <script src="https://unpkg.com/feather-icons"></script>
   -->
-  <script type="text/javascript" src="js/dropzone.js"></script>
   <script type="text/javascript" src="js/feather.min.js"></script>
   <script type="text/javascript" src="js/client.js"></script>
 

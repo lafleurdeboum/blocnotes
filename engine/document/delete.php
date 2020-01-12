@@ -22,25 +22,21 @@ if(is_file("$pool/$filename")) {
     $fileDeleted = true;
   }
 } else {
-  $message = "Il n'y avait pas de fichier $filename dans $pool";
-  $messageType = "alert-warning";
+  array_push($messages, array("Il n'y avait pas de fichier $filename dans $pool", "alert-warning"));
 }
 
 if($DBUpdated) {
   if($fileDeleted) {
-    $message .= " le fichier $filename a été supprimé et oublié";
+    array_push($messages, array("Fichier $filename supprimé et retiré de la base de données", "alert-success"));
   } else {
-  $message .= " le fichier $filename a été oublié";  
+    array_push($messages, array("Fichier $filename retiré de la base de données", "alert-success"));
   }
 } else if($fileDeleted) {
-  $message .= " le fichier $filename a été supprimé";
+    array_push($messages, array("Fichier $filename supprimé", "alert-success"));
 } else {
-  $message .= " le fichier $filename n'a pas pu etre supprimé ni oublié";
-  $messageType = "alert-warning";
+    array_push($messages, array("Le fichier $filename n'a pas pu etre supprimé ni oublié", "alert-success"));
 }
 
-
-$title = "";
 get_document_list();
 return_answer();
 

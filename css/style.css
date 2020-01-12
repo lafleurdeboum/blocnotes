@@ -47,6 +47,7 @@ pre {
 
 body {
   display: flex;
+  min-height: 100vh;
   flex-direction: column;
   box-sizing: border-box;
   margin: 0;
@@ -94,25 +95,7 @@ nav div.alert {
   flex-direction: column;
   padding: 1em;
 }
-form textarea {
-  width: 100%;
-  height: 60vh;
-}
-form.dropzone {
-  display: flex;
-  width: 100%;
-  min-height: 2em;
-  justify-content: center;
-  margin-bottom: 0.3em;
-  padding: 0;
-}
-form.dropzone div.dz-message {
-    display: inline-flex;
-    align-items: center;
-    margin: 0;
-    color: black;
-}
-div.docs-nav {
+.docs-nav {
   justify-content: flex-start;
 }
 #noteReader .contentHolder {
@@ -124,5 +107,19 @@ div.docs-nav {
   margin: auto;
   padding-left: 1em;
   padding-right: 1em;
+}
+#noteEditor {
+    display: flex;
+    flex-direction: column;
+}
+#uploadForm {
+    display: inline-flex;
+}
+#modifyForm {
+    display: flex;
+    flex-grow: 1;
+}
+#modifyForm textarea {
+  width: 100%;
 }
 

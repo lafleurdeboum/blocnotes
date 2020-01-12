@@ -24,7 +24,7 @@ if(is_file($pool . "/" . $uploadFile)) {
       // create.php already returns a JSON whole, so get out :
       return;
     } else {
-      array_push($messages, array("Le fichier $uploadFile n'a pas pu être enregistré dans la DB", "alert-danger"));
+      array_push($messages, array("Le fichier $uploadFile n'a pas pu être ajouté à la base de données", "alert-danger"));
       $title = "";
     }
   } else {
