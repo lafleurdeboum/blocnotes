@@ -101,6 +101,10 @@ nav div.alert {
 .docs-nav {
   justify-content: flex-start;
 }
+.docs-nav .nav-item {
+    display: flex;
+    align-items: center;
+}
 .docs-nav .nav-item.audio, .docs-nav.editable .nav-item {
   margin: 5px;
   border: solid grey;
