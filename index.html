@@ -51,25 +51,24 @@
       <form id="readForm" action="engine/note/read.php" method="POST">
         <input name="title" type="input" hidden />
       </form>
-      <div class="navbar docs-nav">
-      </div>
-      <div class="contentHolder">
-      </div>
-      <div class="notes-nav">
-      </div>
+
+      <span class="docList container">
+        <div class="navbar docs-nav"></div>
+      </span>
+      <div class="contentHolder"></div>
+      <div class="notes-nav"></div>
+
     </div><!-- noteReader -->
 
     <div id="noteEditor" class="container flex-grow-1" hidden>
 
-      <span class="container docList">
-        <span class="navbar docs-nav editable">
-        </span>
+      <span class="docList container">
+        <span class="navbar docs-nav editable"></span>
 
         <form id="uploadForm" action="engine/document/upload.php" method="POST">
           <input name="title" type="hidden" />
           <input id="uploadInput" name="filename" type="file" style="display: none;" />
-          <button id="uploadButton" type='button' class='btn'>
-          </button>
+          <button id="uploadButton" type='button' class='btn'></button>
         </form>
       </span><!-- docList -->
 
@@ -88,8 +87,7 @@
 
       <form id="createForm" action="engine/note/create.php" method="POST">
         <input name="title" type="input" hidden />
-        <div class="navbar docs-nav editable">
-        </div>
+        <div class="navbar docs-nav editable"></div>
         <textarea name="raw_comment"></textarea>
       </form>
     </div><!-- noteCreator -->
