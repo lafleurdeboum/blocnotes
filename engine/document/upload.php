@@ -110,7 +110,9 @@ if(is_file($pool . "/" . $uploadFile)) {
   }
 }
 
-get_document_list();
-
-return_answer();
+// Only return an answer if this was not included from elsewhere :
+if(get_included_files()[0] == __FILE__) {
+  get_document_list();
+  return_answer();
+}
 
