@@ -116,8 +116,18 @@ function populateDocumentList(documents, noteTitle) {
                     link.appendChild(newMedia);
                     break;
                 case "image":
-                    newMedia = "<a href='documents/" + fileinfo.filename + "'><img src='documents/" + fileinfo.filename + "' width=100 height=100 /></a>";
-                    link.innerHTML = newMedia;
+                    var thumbnail = document.createElement("img");
+                    thumbnail.src = "thumbnails/" + fileinfo.filename;
+                    thumbnail.setAttribute("data-photo", "documents/" + fileinfo.filename);
+                    thumbnail.setAttribute("data-photo-title", fileinfo.filename.replace(/\..+$/, ""));
+                    thumbnail.setAttribute("data-photo-w", 1024);
+                    thumbnail.setAttribute("data-photo-h", 768);
+                    thumbnail.setAttribute("data-pswp-uid", 0);
+
+                    newMedia = document.createElement("a");
+                    newMedia.href = "documents/" + fileinfo.filename;
+                    newMedia.appendChild(thumbnail);
+                    link.appendChild(newMedia);
                     break;
             }
             if(docDiv.classList.contains("editable")) {
