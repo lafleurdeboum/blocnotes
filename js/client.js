@@ -112,7 +112,7 @@ function populateDocumentList(documents, noteTitle) {
                         link.appendChild(button);
                     }
                     newMedia = document.createElement("span");
-                    newMedia.innerHTML = fileinfo.filename;
+                    newMedia.innerHTML = "<a href='documents/" + fileinfo.filename + "'>" + fileinfo.filename + "</a>";
                     link.appendChild(newMedia);
                     break;
                 case "image":
