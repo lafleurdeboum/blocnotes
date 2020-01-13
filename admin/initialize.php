@@ -22,6 +22,7 @@
       "CREATE TABLE IF NOT EXISTS notes (
         title STRING,
         comment STRING,
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
         UNIQUE(title) )"
     );
     $db->exec(
@@ -29,7 +30,13 @@
         filename STRING,
         filetype STRING,
         attached_notes STRING,
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
         UNIQUE(filename) )"
+    );
+    $db->exec(
+      "CREATE TRIGGER [updateTimestamp] AFTER UPDATE ON notes FOR EACH ROW BEGIN
+       UPDATE notes SET timestamp = CURRENT_TIMESTAMP WHERE title = old.title;
+       END"
     );
 
     echo "created new db $DBFile<br />\n";
@@ -41,15 +48,21 @@
     );
     echo "added default entry<br />\n";
 
-    ## Populate files table :
+    ## Populate files table and create a note for each file :
 
+    /*
     $files = array_diff(scandir($documentsFolder), array('.', '..'));
     foreach ($files as $file) {
       $type = mime_content_type($documentsFolder . $file);
+      $title = preg_replace('/\..+$/', '', $file);
       $db->exec(
-        "INSERT OR IGNORE INTO documents (filename, filetype, attached_notes) VALUES ('$file', '$type', '')"
+        "INSERT OR IGNORE INTO notes (title, comment) VALUES ('$title', '')"
+      );
+      $db->exec(
+        "INSERT OR IGNORE INTO documents (filename, filetype, attached_notes) VALUES ('$file', '$type', ',$title,')"
       );
     };
+    */
 
     # Check contents :
     $i = 0;

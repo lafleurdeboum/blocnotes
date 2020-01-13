@@ -4,15 +4,15 @@ require_once 'Markdown/Markdown.inc.php';
 use Michelf\Markdown;
 
 $db = null;
-$dbFile = "admin/notes.db";
+// Let includer override $title and $dbFile ;
+if(! array_key_exists('title', $GLOBALS)) { $title = $_POST["title"]; }
+if(array_key_exists('dbFile', $GLOBALS)) { $dbFile = $GLOBALS["dbFile"]; }
+else { $dbFile = "admin/notes.db"; }
 //$dbFile = "admin/rara.db";
 // Presume both db and engine commands live in "$ProgramRoot/engine" :
 $workDir = preg_split("#/engine/#", getcwd())[0];
 // Presume documents upload dir location :
 $pool = "$workDir/documents";
-
-// Let includer override $title ;
-if(! array_key_exists('title', $GLOBALS)) { $title = $_POST["title"]; }
 
 $raw_comment = $_POST["raw_comment"] ?: "";
 $comment = "";
@@ -22,6 +22,7 @@ $messages = array();
 $returnObject = array();
 
 // Let php warnings become errors so as to catch sqlite errors :
+/*
 set_error_handler(function($errno, $errstr, $errfile, $errline){
   if($errno === E_WARNING){
     trigger_error($errstr, E_ERROR);
@@ -31,7 +32,7 @@ set_error_handler(function($errno, $errstr, $errfile, $errline){
     return false;
   }
 });
-
+ */
 
 function load_db() {
   global $db, $dbFile, $workDir, $messages;
