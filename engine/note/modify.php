@@ -1,5 +1,4 @@
 <?php
-require_once 'engine.php';
 
 if(array_key_exists("old_title", $_POST)) {
   $old_title = $_POST["old_title"];
@@ -18,9 +17,9 @@ if($note_exists) {
     $db->querySingle(
         "UPDATE notes SET comment = '" . SQLite3::escapeString($raw_comment) . "' WHERE title = '$old_title';"
     );
-    array_push($messages, array("Commentaire mis à jour"));
+    array_push($messages, array("Note mise à jour", "alert-success"));
   } catch(Throwable $err) {
-    array_push($messages, array($err.message, "alert-danger"));
+    array_push($messages, array($err->getMessage(), "alert-danger"));
   }
   if($old_title != $title) {
     $new_note_exists = $db->querySingle(
@@ -42,7 +41,7 @@ if($note_exists) {
               "UPDATE documents SET attached_notes = '$newAttachedNotes' WHERE filename = '$filename'"
           );
         }
-        array_push($messages, array("Note déplacée ; document reliés", "alert-success"));
+        array_push($messages, array("Note renommée", "alert-success"));
       } catch(Throwable $err) {
         array_push($messages, array($err.message, "alert-danger"));
       }
@@ -56,5 +55,5 @@ if($note_exists) {
   $title = "";
 }
 
-require_once 'read.php';
+require('note/read.php');
 

@@ -1,7 +1,5 @@
 <?php
 
-require_once 'engine.php';
-
 load_db();
 
 $note_exists = $db->querySingle(
@@ -28,7 +26,8 @@ if($note_exists) {
   }
 } else {
   array_push($messages, array("La note $title n'existe pas", "alert-warning"));
+  $title = "";
 }
 
-require_once 'read.php';
+require_once 'note/read.php';
 

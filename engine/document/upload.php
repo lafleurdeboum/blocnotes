@@ -79,10 +79,15 @@ if(is_file($pool . "/" . $uploadFile)) {
   array_push($messages, array("Le fichier $uploadFile existe déjà", "alert-danger"));
   $title = "";
 } else {
-  $type = mime_content_type($pool . "/" . $uploadFile);
-  $filenameInserted = $db->exec(
-      "INSERT OR REPLACE INTO documents (filename, filetype, attached_notes) VALUES ('$uploadFile', '$type', ',$title,');"
-  );
+  try {
+    $type = mime_content_type($_FILES['filename']['tmp_name']);
+    $filenameInserted = $db->exec(
+        "INSERT OR REPLACE INTO documents (filename, filetype, attached_notes) VALUES ('$uploadFile', '$type', ',$title,');"
+    );
+  } catch (Throwable $error) {
+    $filenameInserted = false;
+    array_push($messages, array($error->getMessage(), "alert-warning"));
+  }
   if($filenameInserted) { 
     if(move_uploaded_file($_FILES['filename']['tmp_name'], $pool . "/" . $uploadFile)) {
       array_push($messages, array("Fichier <b>$uploadFile</b> ajouté", "alert-success"));
@@ -98,14 +103,18 @@ if(is_file($pool . "/" . $uploadFile)) {
           $image->writeImage($thumbnails . "/" . $uploadFile);
            */
         } catch (Throwable $error) {
-          array_push($messages, array("Erreur pour les miniatures : " . var_dump($error), "alert-warning"));
+          array_push($messages, array("Erreur pour les miniatures : " . $error->getMessage(), "alert-warning"));
           ;
         }
       }
     } else {
       array_push($messages, array("Le fichier <b>$uploadFile</b> n'a pas pu être copié. Vérifiez les permissions sur le dossier <b>$pool</b> dans le serveur", "alert-danger"));
       if($filenameInserted) {
-        $db->exec("DELETE FROM documents WHERE filename = '$uploadFile'");
+        try {
+          $db->exec("DELETE FROM documents WHERE filename = '$uploadFile'");
+        } catch (Throwable $error) {
+          array_push($messages, array($error->getMessage(), "alert-warning"));
+        }
       }
       // TODO We should tell a calling process like createFromDoc that this failed.
     }

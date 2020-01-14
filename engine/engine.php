@@ -4,46 +4,48 @@ require_once 'Markdown/Markdown.inc.php';
 use Michelf\Markdown;
 
 $db = null;
-// Let includer override $title and $dbFile ;
-if(! array_key_exists('title', $GLOBALS)) { $title = $_POST["title"]; }
-if(array_key_exists('dbFile', $GLOBALS)) { $dbFile = $GLOBALS["dbFile"]; }
-else { $dbFile = "admin/notes.db"; }
-//$dbFile = "admin/rara.db";
-// Presume both db and engine commands live in "$ProgramRoot/engine" :
-$workDir = preg_split("#/engine/#", getcwd())[0];
+// Presume engine.php (this file) lives in "$programRoot/engine" :
+$programRoot = preg_replace("/engine$/", "", getcwd());
 // Presume documents upload dir location :
-$pool = "$workDir/documents";
+$pool = $programRoot . "documents";
 
-$raw_comment = $_POST["raw_comment"] ?: "";
+// Let includer override $dbFile ;
+if(array_key_exists('dbFile', $GLOBALS)) { $dbFile = $GLOBALS["dbFile"]; }
+else { $dbFile = $programRoot . "/admin/notes.db"; }
+// Let includer override $title and $raw_comment ;
+if(! array_key_exists('call', $GLOBALS)) { $call = $_POST["call"]; }
+if(! array_key_exists('title', $GLOBALS)) { $title = $_POST["title"]; }
+if(array_key_exists('raw_comment', $GLOBALS)) { $raw_comment = $_POST["raw_comment"]; }
+else { $raw_comment = ""; }
 $comment = "";
 $noteList = array();
 $documents = array();
+// $messages is an array of arrays, each containing
+// array(String message, [ String alertType="alert-info", [ Int timeout=4000 ]])
 $messages = array();
 $returnObject = array();
 
-// Let php warnings become errors so as to catch sqlite errors :
-/*
-set_error_handler(function($errno, $errstr, $errfile, $errline){
-  if($errno === E_WARNING){
-    trigger_error($errstr, E_ERROR);
-    return true;
-  } else {
-    // Fallback to default php error handler :
+// Error / Warning / Exception catchall
+// grabbed from https://stackoverflow.com/questions/1241728/can-i-try-catch-a-warning#1241751
+set_error_handler(function($errno, $errstr, $errfile, $errline, $errcontext) {
+  // If the error was escaped with the @ operator, let the process continue :
+  if (0 === error_reporting()) {
     return false;
   }
+  throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
 });
- */
+
 
 function load_db() {
-  global $db, $dbFile, $workDir, $messages;
+  global $db, $dbFile, $messages;
 
-  $dbFileRights = substr(sprintf('%o', fileperms("$workDir/$dbFile")), -4);
+  $dbFileRights = substr(sprintf('%o', fileperms("$dbFile")), -4);
   if($dbFileRights != "0666") {
     array_push($messages, array("La base de données n'est pas accessible en écriture", "alert-warning"));
   }
   if(extension_loaded('sqlite3')) {
     try {
-      $db = new SQLite3("$workDir/$dbFile");
+      $db = new SQLite3("$dbFile");
     } catch(Throwable $err) {
       array_push($messages, array($err.message, "alert-danger"));
     }
@@ -106,6 +108,7 @@ function get_document_list() {
     }
   } catch(Throwable $err) {
     if($err->getPrevious() == NULL) {
+      // TODO Check that this assertion is meaningful here.
       // The query returned an empty list ; $documents is an empty array, we can
       return;
     }
@@ -131,5 +134,16 @@ function return_answer() {
 
   echo json_encode($returnObject);
   echo "\n";
+}
+
+if(is_file("$call")) {
+  try {
+    require($call);
+  } catch (Throwable $error) {
+    array_push($messages, array($error->getMessage(), "alert-danger", 0));
+    return_answer();
+  }
+} else {
+  array_push($messages, array("'$call' is not a valid engine call", "alert-danger", 0));
 }
 

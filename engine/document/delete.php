@@ -1,17 +1,18 @@
 <?php
 
-require_once 'engine.php';
-
 $filename = $_POST["filename"] ?: "";
 $fileDeleted = false;
 $DBUpdated = false;
 
 load_db();
 
-// DELETE queries return true whatsoever.
-$deleteFailed = $db->querySingle(
-  "DELETE FROM documents WHERE filename = '$filename';"
-);
+try {
+  $deleteFailed = $db->querySingle(
+    "DELETE FROM documents WHERE filename = '$filename';"
+  );
+} catch (Throwable $err) {
+  array_push($messages, array($err.message, "alert-danger"));
+}
 if($deleteFailed != FALSE) {
   // The call succeeded.
   $DBUpdated = true;

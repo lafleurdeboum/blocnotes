@@ -15,6 +15,12 @@ function query_engine(form, callback) {
             return false;
         }
     }
+    var callParameter = document.createElement("input");
+    callParameter.type = "hidden";
+    callParameter.name = "call";
+    callParameter.value = form.getAttribute("call");
+    form.appendChild(callParameter);
+    console.log(form.call);
     const XHR = new XMLHttpRequest();
     const FD = new FormData(form);
     
@@ -138,7 +144,8 @@ function populateDocumentList(documents, noteTitle) {
             if(docDiv.classList.contains("editable")) {
                 var deleteDocForm = document.createElement("form");
                 //deleteDocForm.action = "engine/note/detachDocument.php";
-                deleteDocForm.action = "engine/document/delete.php";
+                deleteDocForm.action = "engine/engine.php";
+                deleteDocForm.setAttribute("call", "document/delete.php");
                 deleteDocForm.method = "post";
                 deleteDocForm.hidden = true;
                 deleteDocForm.classList.add("deleteDocument");
