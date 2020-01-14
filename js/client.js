@@ -34,6 +34,11 @@ function query_engine(form, callback) {
             messageUser(event.target.responseText, "alert-danger", timeout=0);
         }
         callback(answer);
+        /*
+        history.pushState({
+            title: answer.title
+        }, "page 2", "?title=" + answer.title + "&action=" + form.action);
+        */
     });
 
     XHR.open("POST", form.action);
