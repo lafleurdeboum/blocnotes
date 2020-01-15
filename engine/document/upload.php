@@ -46,7 +46,7 @@ class ImageFactory {
                         $crop_y     =   ceil(($h - $w) / 2);
                 }
                 // New image
-                $tmp_img = imagecreatetruecolor($width,$height);
+                $tmp_img = imagecreatetruecolor($width, $height);
                 // Copy/crop action
                 imagecopyresampled($tmp_img, $thumb_img, 0, 0, $crop_x, $crop_y, $new_width, $new_height, $w, $h);
                 // If false, send browser header for output to browser window
@@ -54,7 +54,8 @@ class ImageFactory {
                     header('Content-Type: '.$this->original['type']);
                 // Output proper image type
                 if($this->original['type'] == 'image/gif')
-                    imagegif($tmp_img);
+                    //imagegif($tmp_img);
+                    ($SetFileName !== false)? $retval = imagegif($tmp_img, $SetFileName, $quality) : imagegif($tmp_img);
                 elseif($this->original['type'] == 'image/png')
                     ($SetFileName !== false)? imagepng($tmp_img, $SetFileName, $quality) : imagepng($tmp_img);
                 elseif($this->original['type'] == 'image/jpeg')
