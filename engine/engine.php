@@ -5,18 +5,18 @@ use Michelf\Markdown;
 
 $db = null;
 // Presume engine.php (this file) lives in "$programRoot/engine" :
-$programRoot = preg_replace("/engine$/", "", getcwd());
+$programRoot = preg_replace("%/engine$%", "", getcwd());
 // Presume documents upload dir location :
-$pool = $programRoot . "documents";
+$pool = $programRoot . "/documents";
 
 // Let includer override $dbFile ;
 if(array_key_exists('dbFile', $GLOBALS)) { $dbFile = $GLOBALS["dbFile"]; }
 else { $dbFile = $programRoot . "/admin/notes.db"; }
 // Let includer override $title and $raw_comment ;
-if(! array_key_exists('call', $GLOBALS)) { $call = $_POST["call"]; }
-if(! array_key_exists('title', $GLOBALS)) { $title = $_POST["title"]; }
-if(array_key_exists('raw_comment', $GLOBALS)) { $raw_comment = $_POST["raw_comment"]; }
-else { $raw_comment = ""; }
+if(array_key_exists('call', $_POST)) { $call = $_POST["call"]; }
+if(array_key_exists('title', $_POST)) { $title = $_POST["title"]; }
+if(array_key_exists('raw_comment', $_POST)) { $raw_comment = $_POST["raw_comment"]; }
+//else { $raw_comment = ""; }
 $comment = "";
 $noteList = array();
 $documents = array();
