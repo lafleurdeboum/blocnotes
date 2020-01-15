@@ -145,5 +145,6 @@ if(is_file("$call")) {
   }
 } else {
   array_push($messages, array("'$call' is not a valid engine call", "alert-danger", 0));
+  return_answer();
 }
 

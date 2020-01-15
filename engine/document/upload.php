@@ -78,7 +78,6 @@ $uploadFile = basename($_FILES['filename']['name']);
 
 if(is_file($pool . "/" . $uploadFile)) {
   array_push($messages, array("Le fichier $uploadFile existe déjà", "alert-danger"));
-  $title = "";
 } else {
   try {
     $type = mime_content_type($_FILES['filename']['tmp_name']);
@@ -124,8 +123,8 @@ if(is_file($pool . "/" . $uploadFile)) {
   }
 }
 
-// Only return an answer if this was not included from elsewhere :
-if(get_included_files()[0] == __FILE__) {
+// Only return an answer if the engine called for this file directly :
+if($programRoot . "/engine/" . $call == __file__) {
   get_document_list();
   return_answer();
 }
