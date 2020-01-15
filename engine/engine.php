@@ -46,8 +46,8 @@ function load_db() {
   if(extension_loaded('sqlite3')) {
     try {
       $db = new SQLite3("$dbFile");
-    } catch(Throwable $err) {
-      array_push($messages, array($err.message, "alert-danger"));
+    } catch(Throwable $error) {
+      array_push($messages, array($error->getMessage(), "alert-danger"));
     }
   } else {
     array_push($messages, array("Pas de support sqlite3 ! <br />Pas d'Accès à la base de données <b>$dbFile</b>", "alert-warning"));
@@ -84,8 +84,8 @@ function get_note_list() {
   global $db, $noteList, $messages;
   try {
     $notes = $db->query("SELECT title FROM notes;");
-  } catch(Throwable $err) {
-    array_push($messages, array($err.message, "alert-danger"));
+  } catch(Throwable $error) {
+    array_push($messages, array($error->getMessage(), "alert-danger"));
   }
   if ($notes) {
     while ($note = $notes->fetchArray()) {
@@ -106,8 +106,8 @@ function get_document_list() {
           "SELECT filename, filetype FROM documents WHERE instr(attached_notes, ',$title,');"
       );
     }
-  } catch(Throwable $err) {
-    if($err->getPrevious() == NULL) {
+  } catch(Throwable $error) {
+    if($error->getPrevious() == NULL) {
       // TODO Check that this assertion is meaningful here.
       // The query returned an empty list ; $documents is an empty array, we can
       return;

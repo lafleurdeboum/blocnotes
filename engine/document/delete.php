@@ -10,8 +10,8 @@ try {
   $deleteFailed = $db->querySingle(
     "DELETE FROM documents WHERE filename = '$filename';"
   );
-} catch (Throwable $err) {
-  array_push($messages, array($err.message, "alert-danger"));
+} catch (Throwable $error) {
+  array_push($messages, array($error->getMessage(), "alert-danger"));
 }
 if($deleteFailed != FALSE) {
   // The call succeeded.

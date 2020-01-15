@@ -18,8 +18,8 @@ if($note_exists) {
         "UPDATE notes SET comment = '" . SQLite3::escapeString($raw_comment) . "' WHERE title = '$old_title';"
     );
     array_push($messages, array("Note mise à jour", "alert-success"));
-  } catch(Throwable $err) {
-    array_push($messages, array($err->getMessage(), "alert-danger"));
+  } catch(Throwable $error) {
+    array_push($messages, array($error->getMessage(), "alert-danger"));
   }
   if($old_title != $title) {
     $new_note_exists = $db->querySingle(
@@ -42,8 +42,8 @@ if($note_exists) {
           );
         }
         array_push($messages, array("Note renommée", "alert-success"));
-      } catch(Throwable $err) {
-        array_push($messages, array($err.message, "alert-danger"));
+      } catch(Throwable $error) {
+        array_push($messages, array($error->getMessage(), "alert-danger"));
       }
     } else {
       array_push($messages, array("La note <b>$title</b> existe déjà", "alert-danger"));

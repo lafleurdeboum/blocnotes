@@ -21,8 +21,8 @@ if($note_exists) {
     }
     array_push($messages, array("Note <b>$title</b> supprimée", "alert-success"));
     $title = "";
-  } catch(Throwable $err) {
-    array_push($messages, array($err.message, "alert-danger"));
+  } catch(Throwable $error) {
+    array_push($messages, array($error->getMessage(), "alert-danger"));
   }
 } else {
   array_push($messages, array("La note $title n'existe pas", "alert-warning"));
