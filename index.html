@@ -21,7 +21,7 @@
         Bloc Notes
       </a>
 
-      <form id="uploadCreateForm" action="engine/engine.php" call="note/createFromDoc.php" method="POST">
+      <form id="uploadCreateForm" action="engine/engine.php" engine_call="note/createFromDoc.php" method="POST">
         <input name="title" hidden />
         <input id="uploadCreateInput" name="filename" type="file" style="display: none;" />
         <button id='leftMostButton' type='button' class='btn mr-3'>
@@ -49,7 +49,7 @@
 
     <div id="noteReader" class="container">
 
-      <form id="readForm" action="engine/engine.php" call="note/read.php" method="POST">
+      <form id="readForm" action="engine/engine.php" engine_call="note/read.php" method="POST">
         <input name="title" type="input" hidden />
       </form>
 
@@ -66,19 +66,19 @@
       <span class="docList container">
         <span class="navbar docs-nav editable"></span>
 
-        <form id="uploadForm" action="engine/engine.php" call="document/upload.php" method="POST">
+        <form id="uploadForm" action="engine/engine.php" engine_call="document/upload.php" method="POST">
           <input name="title" type="hidden" />
           <input id="uploadInput" name="filename" type="file" style="display: none;" />
           <button id="uploadButton" type='button' class='btn'></button>
         </form>
       </span><!-- docList -->
 
-      <form id="modifyForm" action="engine/engine.php" call="note/modify.php" method="POST">
+      <form id="modifyForm" action="engine/engine.php" engine_call="note/modify.php" method="POST">
         <input name="old_title" type="input" hidden />
         <input name="title" type="input" hidden />
         <textarea name="raw_comment"></textarea>
       </form>
-      <form id="deleteForm" action="engine/engine.php" call="note/delete.php" method="POST">
+      <form id="deleteForm" action="engine/engine.php" engine_call="note/delete.php" method="POST">
         <input name="title" type="input" hidden />
       </form>
 
@@ -86,7 +86,7 @@
 
     <div id="noteCreator" class="container" hidden>
 
-      <form id="createForm" action="engine/engine.php" call="note/create.php" method="POST">
+      <form id="createForm" action="engine/engine.php" engine_call="note/create.php" method="POST">
         <input name="title" type="input" hidden />
         <div class="navbar docs-nav editable"></div>
         <textarea name="raw_comment"></textarea>

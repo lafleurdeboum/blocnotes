@@ -17,10 +17,10 @@ function query_engine(form, callback) {
     }
     var callParameter = document.createElement("input");
     callParameter.type = "hidden";
-    callParameter.name = "call";
-    callParameter.value = form.getAttribute("call");
+    callParameter.name = "engine_call";
+    callParameter.value = form.getAttribute("engine_call");
     form.appendChild(callParameter);
-    console.log(form.call);
+    console.log(form.engine_call);
     const XHR = new XMLHttpRequest();
     const FD = new FormData(form);
     
@@ -145,7 +145,7 @@ function populateDocumentList(documents, noteTitle) {
                 var deleteDocForm = document.createElement("form");
                 //deleteDocForm.action = "engine/note/detachDocument.php";
                 deleteDocForm.action = "engine/engine.php";
-                deleteDocForm.setAttribute("call", "document/delete.php");
+                deleteDocForm.setAttribute("engine_call", "document/delete.php");
                 deleteDocForm.method = "post";
                 deleteDocForm.hidden = true;
                 deleteDocForm.classList.add("deleteDocument");
@@ -330,7 +330,7 @@ function editNote(note) {
     rightButton.innerHTML = feather.icons["save"].toSvg();
     rightButton.onclick = function(event) {
         leftMostButton.onclick = null;
-        // modifyForm calls modify.php who moves the note to the new title
+        // modifyForm calls note/modify.php who moves the note to the new title
         // and relinks all the docs.
         modifyForm.title.value = titleInput.value;
         query_engine(modifyForm, function(answer) {

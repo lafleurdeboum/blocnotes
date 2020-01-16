@@ -13,7 +13,7 @@ $pool = $programRoot . "/documents";
 if(array_key_exists('dbFile', $GLOBALS)) { $dbFile = $GLOBALS["dbFile"]; }
 else { $dbFile = $programRoot . "/admin/notes.db"; }
 // Let includer override $title and $raw_comment ;
-if(array_key_exists('call', $_POST)) { $call = $_POST["call"]; }
+if(array_key_exists('engine_call', $_POST)) { $engine_call = $_POST["engine_call"]; }
 if(array_key_exists('title', $_POST)) { $title = $_POST["title"]; }
 if(array_key_exists('raw_comment', $_POST)) { $raw_comment = $_POST["raw_comment"]; }
 //else { $raw_comment = ""; }
@@ -136,15 +136,15 @@ function return_answer() {
   echo "\n";
 }
 
-if(is_file("$call")) {
+if(is_file("$engine_call")) {
   try {
-    require($call);
+    require($engine_call);
   } catch (Throwable $error) {
-    array_push($messages, array($error->getMessage(), "alert-danger", 0));
+    array_push($messages, array($error->getMessage() . " in " .$error->getFile() . $error->getLine(), "alert-danger", 0));
     return_answer();
   }
 } else {
-  array_push($messages, array("'$call' is not a valid engine call", "alert-danger", 0));
+  array_push($messages, array("'$engine_call' is not a valid engine call", "alert-danger", 0));
   return_answer();
 }
 
