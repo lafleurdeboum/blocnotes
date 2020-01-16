@@ -31,8 +31,10 @@ function query_engine(form, callback) {
             answer.messages.forEach(function(message) {
                 if(message.length == 1) {
                     messageUser(message[0], "alert-info", 4000);
-                } else {
+                } else if(message.length == 2) {
                     messageUser(message[0], message[1], 4000);
+                } else {
+                    messageUser(message[0], message[1], message[2]);
                 }
             });
         } catch (err) {

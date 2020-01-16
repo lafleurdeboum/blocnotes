@@ -35,22 +35,27 @@ set_error_handler(function($errno, $errstr, $errfile, $errline, $errcontext) {
   throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
 });
 
+function messageUser($message, $alertType="alert-info", $timeout=4000) {
+  global $messages;
+
+  array_push($messages, array($message, $alertType, $timeout));
+}
 
 function load_db() {
   global $db, $dbFile, $messages;
 
   $dbFileRights = substr(sprintf('%o', fileperms("$dbFile")), -4);
   if($dbFileRights != "0666") {
-    array_push($messages, array("La base de données n'est pas accessible en écriture", "alert-warning"));
+    messageUser("La base de données n'est pas accessible en écriture", "alert-warning");
   }
   if(extension_loaded('sqlite3')) {
     try {
       $db = new SQLite3("$dbFile");
     } catch(Throwable $error) {
-      array_push($messages, array($error->getMessage(), "alert-danger"));
+      messageUser($error->getMessage() . " in " .$error->getFile() . $error->getLine(), "alert-danger");
     }
   } else {
-    array_push($messages, array("Pas de support sqlite3 ! <br />Pas d'Accès à la base de données <b>$dbFile</b>", "alert-warning"));
+    messageUser("Pas de support sqlite3 ! <br />Pas d'Accès à la base de données <b>$dbFile</b>", "alert-warning");
   }
 }
 
@@ -85,7 +90,7 @@ function get_note_list() {
   try {
     $notes = $db->query("SELECT title FROM notes;");
   } catch(Throwable $error) {
-    array_push($messages, array($error->getMessage(), "alert-danger"));
+    messageUser($error->getMessage(), "alert-danger");
   }
   if ($notes) {
     while ($note = $notes->fetchArray()) {
@@ -140,11 +145,11 @@ if(is_file("$engine_call")) {
   try {
     require($engine_call);
   } catch (Throwable $error) {
-    array_push($messages, array($error->getMessage() . " in " .$error->getFile() . $error->getLine(), "alert-danger", 0));
+    messageUser($error->getMessage() . " in " .$error->getFile() . $error->getLine(), "alert-danger", 0);
     return_answer();
   }
 } else {
-  array_push($messages, array("'$engine_call' is not a valid engine call", "alert-danger", 0));
+  messageUser("'$engine_call' is not a valid engine call", "alert-danger", 0);
   return_answer();
 }
 

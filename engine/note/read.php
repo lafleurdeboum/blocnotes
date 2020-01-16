@@ -2,10 +2,10 @@
 
 load_db();
 $comment_exists = $db->querySingle(
-  "SELECT EXISTS(SELECT comment FROM notes WHERE title = '$title');"
+  "SELECT EXISTS(SELECT title FROM notes WHERE title = '$title');"
 );
 if(! $comment_exists) {
-  array_push($messages, array("Le commentaire pour le titre <b>$title</b> n'existe pas", "alert-danger"));
+  messageUser("Le commentaire pour le titre <b>$title</b> n'existe pas", "alert-danger");
   $title = "";
 } else {
   try {
@@ -14,10 +14,7 @@ if(! $comment_exists) {
     );
     md2html();
   } catch (Throwable $error) {
-    array_push($messages, array($error->getMessage(), "alert-danger"));
-  }
-  if($raw_comment == "") {
-    array_push($messages, array("Note vide"));
+    messageUser($error->getMessage() . " in " .$error->getFile() . $error->getLine(), "alert-danger");
   }
 }
 

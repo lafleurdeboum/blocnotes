@@ -11,7 +11,7 @@ try {
     "DELETE FROM documents WHERE filename = '$filename';"
   );
 } catch (Throwable $error) {
-  array_push($messages, array($error->getMessage(), "alert-danger"));
+  messageUser($error->getMessage() . " in " .$error->getFile() . $error->getLine(), "alert-danger");
 }
 if($deleteFailed != FALSE) {
   // The call succeeded.
@@ -23,19 +23,19 @@ if(is_file("$pool/$filename")) {
     $fileDeleted = true;
   }
 } else {
-  array_push($messages, array("Il n'y avait pas de fichier $filename dans $pool", "alert-warning"));
+  messageUser("Il n'y avait pas de fichier $filename dans $pool", "alert-warning");
 }
 
 if($DBUpdated) {
   if($fileDeleted) {
-    array_push($messages, array("Fichier $filename supprimé et retiré de la base de données", "alert-success"));
+    messageUser("Fichier $filename supprimé et retiré de la base de données", "alert-success");
   } else {
-    array_push($messages, array("Fichier $filename retiré de la base de données", "alert-success"));
+    messageUser("Fichier $filename retiré de la base de données", "alert-success");
   }
 } else if($fileDeleted) {
-    array_push($messages, array("Fichier $filename supprimé", "alert-success"));
+    messageUser("Fichier $filename supprimé", "alert-success");
 } else {
-    array_push($messages, array("Le fichier $filename n'a pas pu etre supprimé ni oublié", "alert-success"));
+    messageUser("Le fichier $filename n'a pas pu etre supprimé ni oublié", "alert-success");
 }
 
 get_document_list();
