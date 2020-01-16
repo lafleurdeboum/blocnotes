@@ -69,62 +69,83 @@ class ImageFactory {
         }
 }
 
-
 require_once 'engine.php';
 
 load_db();
 
 $uploadFile = basename($_FILES['filename']['name']);
+$uploadStatus = $_FILES['filename']['error'];
 
-if(is_file($pool . "/" . $uploadFile)) {
-  array_push($messages, array("Le fichier $uploadFile existe déjà", "alert-danger"));
-} else {
-  try {
-    $type = mime_content_type($_FILES['filename']['tmp_name']);
-    $filenameInserted = $db->exec(
-        "INSERT OR REPLACE INTO documents (filename, filetype, attached_notes) VALUES ('$uploadFile', '$type', ',$title,');"
-    );
-  } catch (Throwable $error) {
-    $filenameInserted = false;
-    array_push($messages, array($error->getMessage(), "alert-warning"));
-  }
-  if($filenameInserted) { 
+if($uploadStatus == UPLOAD_ERR_OK) {
+  if(is_file($pool . "/" . $uploadFile)) {
+    messageUser("Le fichier $uploadFile existe déjà", "alert-danger");
+  } else {
+    //array_push($messages, array(preg_replace("/,/", ",\n", json_encode($_FILES)), "alert-info", 0));
     if(move_uploaded_file($_FILES['filename']['tmp_name'], $pool . "/" . $uploadFile)) {
-      array_push($messages, array("Fichier <b>$uploadFile</b> ajouté", "alert-success"));
-      if(explode("/", $type)[0] == "image") {
-        try {
-          $thumbnails = $pool . "/thumbnails";
-          if(! is_dir($thumbnails)) { mkdir($thumbnails); }
-          $ImageMaker = new ImageFactory();
-          $ImageMaker->Thumbnailer($pool . "/" . $uploadFile, 120, 120, $thumbnails . "/" . $uploadFile);
-          /*
-          $thumbnail = new Imagick($pool . "/" . $uploadFile);
-          $image->cropThumbnailImage(100, 100);
-          $image->writeImage($thumbnails . "/" . $uploadFile);
-           */
-        } catch (Throwable $error) {
-          array_push($messages, array("Erreur pour les miniatures : " . $error->getMessage(), "alert-warning"));
-          ;
-        }
+      try {
+        $type = mime_content_type($pool . "/" . $uploadFile);
+        //$type = $_FILES['filename']['type'];
+        $filenameInserted = $db->exec(
+            "INSERT OR REPLACE INTO documents (filename, filetype, attached_notes) VALUES ('$uploadFile', '$type', ',$title,');"
+        );
+        messageUser("Fichier <b>$uploadFile</b> ajouté", "alert-success");
+      } catch (Throwable $error) {
+        $filenameInserted = false;
+        messageUser($error->getMessage() . " in " .$error->getFile() . $error->getLine(), "alert-danger");
       }
-    } else {
-      array_push($messages, array("Le fichier <b>$uploadFile</b> n'a pas pu être copié. Vérifiez les permissions sur le dossier <b>$pool</b> dans le serveur", "alert-danger"));
-      if($filenameInserted) {
+      if($filenameInserted) { 
+        if(explode("/", $type)[0] == "image") {
+          try {
+            $thumbnails = $pool . "/thumbnails";
+            if(! is_dir($thumbnails)) { mkdir($thumbnails); }
+            $ImageMaker = new ImageFactory();
+            $ImageMaker->Thumbnailer($pool . "/" . $uploadFile, 120, 120, $thumbnails . "/" . $uploadFile);
+            /*
+            $thumbnail = new Imagick($pool . "/" . $uploadFile);
+            $image->cropThumbnailImage(100, 100);
+            $image->writeImage($thumbnails . "/" . $uploadFile);
+             */
+          } catch (Throwable $error) {
+            messageUser("Erreur pour les miniatures : " . $error->getMessage() . " in " . $error->getFile() . $error->getLine(), "alert-warning");
+          }
+        }
+      } else {
+        messageUser("Le fichier <b>$uploadFile</b> n'a pas pu être ajouté à la base de données", "alert-danger");
         try {
           $db->exec("DELETE FROM documents WHERE filename = '$uploadFile'");
         } catch (Throwable $error) {
-          array_push($messages, array($error->getMessage(), "alert-warning"));
+          messageUser("On l'a copié, maintenant on ne peut plus l'enlever !", "alert-warning");
+        } finally {
+          return -1;
         }
       }
-      // TODO We should tell a calling process like createFromDoc that this failed.
+    } else {
+      messageUser("Le fichier <b>$uploadFile</b> n'a pas pu être copié. Vérifiez les permissions sur le dossier <b>$pool</b> dans le serveur", "alert-danger");
+      return -1;
     }
-  } else {
-    array_push($messages, array("Le fichier <b>$uploadFile</b> n'a pas pu être ajouté à la base de données", "alert-danger"));
   }
+} else {
+  switch($uploadStatus) {
+    case UPLOAD_ERR_INI_SIZE:
+    case UPLOAD_ERR_FORM_SIZE:
+      messageUser("Fichier trop gros - limite : " . round(file_upload_max_size()/1048576) . " Mo", "alert-danger");
+      break;
+    case UPLOAD_ERR_PARTIAL:
+      messageUser("Le fichier n'a pas pu être récupéré", "alert-danger");
+      break;
+    case UPLOAD_ERR_NO_FILE:
+      messageUser("Le fichier est vide", "alert-danger");
+      break;
+    default:
+      messageUser("Erreur interne : " . $_FILES['newfile']['error'], "alert-danger");
+      break;
+  }
+  // TODO Tell caller we failed :
+  return -1;
 }
 
 // Only return an answer if the engine called for this file directly :
-if($programRoot . "/engine/" . $call == __file__) {
+if($programRoot . "/engine/" . $engine_call == __file__) {
   get_document_list();
   return_answer();
 }
