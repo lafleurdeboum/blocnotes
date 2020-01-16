@@ -2,9 +2,13 @@
 
 require('document/upload.php');
 
-$title = preg_replace("/\.\w+$/", "", $uploadFile);
-$raw_comment = "";
-$comment = "";
+if($fileInserted) {
+  $title = preg_replace("/\.\w+$/", "", $uploadFile);
+  $raw_comment = "";
+  //$comment = "";
 
-require('note/create.php');
+  require('note/create.php');
+} else {
+  require('note/read.php');
+}
 

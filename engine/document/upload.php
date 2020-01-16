@@ -78,6 +78,7 @@ class ImageFactory {
 
 load_db();
 
+$fileInserted = false;
 $uploadFile = basename($_FILES['filename']['name']);
 $uploadStatus = $_FILES['filename']['error'];
 
@@ -90,15 +91,15 @@ if($uploadStatus == UPLOAD_ERR_OK) {
       try {
         $type = mime_content_type($pool . "/" . $uploadFile);
         //$type = $_FILES['filename']['type'];
-        $filenameInserted = $db->exec(
+        $fileInserted = $db->exec(
             "INSERT OR REPLACE INTO documents (filename, filetype, attached_notes) VALUES ('$uploadFile', '$type', ',$title,');"
         );
         messageUser("Fichier <b>$uploadFile</b> ajouté", "alert-success");
       } catch (Throwable $error) {
-        $filenameInserted = false;
+        $fileInserted = false;
         messageUser($error->getMessage() . " in " .$error->getFile() . $error->getLine(), "alert-danger");
       }
-      if($filenameInserted) { 
+      if($fileInserted) { 
         if(explode("/", $type)[0] == "image") {
           try {
             $thumbnails = $pool . "/thumbnails";
@@ -121,12 +122,10 @@ if($uploadStatus == UPLOAD_ERR_OK) {
         } catch (Throwable $error) {
           messageUser("On l'a copié, maintenant on ne peut plus l'enlever !", "alert-warning");
         } finally {
-          return -1;
         }
       }
     } else {
       messageUser("Le fichier <b>$uploadFile</b> n'a pas pu être copié. Vérifiez les permissions sur le dossier <b>$pool</b> dans le serveur", "alert-danger");
-      return -1;
     }
   }
 } else {
@@ -145,8 +144,6 @@ if($uploadStatus == UPLOAD_ERR_OK) {
       messageUser("Erreur interne : " . $_FILES['newfile']['error'], "alert-danger");
       break;
   }
-  // TODO Tell caller we failed :
-  return -1;
 }
 
 // Only return an answer if the engine called for this file directly :
