@@ -142,6 +142,9 @@ function populateDocumentList(documents, noteTitle) {
                     newMedia.appendChild(thumbnail);
                     link.appendChild(newMedia);
                     break;
+                default:
+                    link.innerHTML = "<a href='" + fileinfo.filename + "'>" + fileinfo.filename + "</a>";
+                    break;
             }
             if(docDiv.classList.contains("editable")) {
                 var deleteDocForm = document.createElement("form");
