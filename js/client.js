@@ -125,7 +125,7 @@ function populateDocumentList(documents, noteTitle) {
                     break;
                 case "image":
                     var thumbnail = document.createElement("img");
-                    thumbnail.src = "thumbnails/" + fileinfo.filename;
+                    thumbnail.src = "documents/thumbnails/" + fileinfo.filename;
                     thumbnail.setAttribute("data-photo", "documents/" + fileinfo.filename);
                     thumbnail.setAttribute("data-photo-title", fileinfo.filename.replace(/\..+$/, ""));
                     thumbnail.setAttribute("data-photo-w", 1024);
