@@ -15,12 +15,7 @@ function query_engine(form, callback) {
             return false;
         }
     }
-    var callParameter = document.createElement("input");
-    callParameter.type = "hidden";
-    callParameter.name = "engine_call";
-    callParameter.value = form.getAttribute("engine_call");
-    form.appendChild(callParameter);
-    console.log(form.engine_call);
+    //console.log(form.engine_call);
     const XHR = new XMLHttpRequest();
     const FD = new FormData(form);
     
@@ -143,17 +138,21 @@ function populateDocumentList(documents, noteTitle) {
                     link.appendChild(newMedia);
                     break;
                 default:
-                    link.innerHTML = "<a href='" + fileinfo.filename + "'>" + fileinfo.filename + "</a>";
+                    link.innerHTML = "<a href='documents/" + fileinfo.filename + "'>" + fileinfo.filename + "</a>";
                     break;
             }
             if(docDiv.classList.contains("editable")) {
                 var deleteDocForm = document.createElement("form");
-                //deleteDocForm.action = "engine/note/detachDocument.php";
                 deleteDocForm.action = "engine/engine.php";
-                deleteDocForm.setAttribute("engine_call", "document/delete.php");
                 deleteDocForm.method = "post";
                 deleteDocForm.hidden = true;
                 deleteDocForm.classList.add("deleteDocument");
+                var callParameter = document.createElement("input");
+                callParameter.type = "hidden";
+                callParameter.name = "engine_call";
+                //callParameter.value = "note/detachDocument.php";
+                callParameter.value = "document/delete.php";
+                deleteDocForm.appendChild(callParameter);
                 var noteTitleInput = document.createElement("input");
                 noteTitleInput.name = "title";
                 noteTitleInput.value = noteTitle;
