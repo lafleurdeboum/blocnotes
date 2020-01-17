@@ -9,8 +9,8 @@ for (var i=0; i<args.length; ++i) {
 
 function query_engine(form, callback) {
     //form.action = "engine/echo.php";
-    if(form.action.search("delete.php") != -1) {
-        target = form.title ? form.title.value : form.filename.value;
+    if(form.engine_call.value.search("delete.php") != -1) {
+        target = form.filename ? form.filename.value : form.title.value;
         if(! confirm("Voulez-vous vraiment supprimer " + target + " ?")) {
             return false;
         }

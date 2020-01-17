@@ -35,6 +35,7 @@ if($doc_in_db) {
       }
     } else {
       $deleteStatus = "Il n'y avait pas de fichier $filename dans $pool";
+      // So having it deleted from DB is all right.
     }
   }
 } else {
