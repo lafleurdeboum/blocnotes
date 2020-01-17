@@ -76,15 +76,16 @@ class ImageFactory {
   }
 }
 
-load_db();
-
 $fileInserted = false;
 $uploadFile = basename($_FILES['filename']['name']);
-$uploadStatus = $_FILES['filename']['error'];
+$uploadPreStatus = $_FILES['filename']['error'];
+$uploadStatus = false;
 
-if($uploadStatus == UPLOAD_ERR_OK) {
+load_db();
+
+if($uploadPreStatus == UPLOAD_ERR_OK) {
   if(is_file($pool . "/" . $uploadFile)) {
-    messageUser("Le fichier $uploadFile existe déjà", "alert-danger");
+    $uploadStatus = "Le fichier $uploadFile existe déjà";
   } else {
     //array_push($messages, array(preg_replace("/,/", ",\n", json_encode($_FILES)), "alert-info", 0));
     if(move_uploaded_file($_FILES['filename']['tmp_name'], $pool . "/" . $uploadFile)) {
@@ -94,12 +95,13 @@ if($uploadStatus == UPLOAD_ERR_OK) {
         $fileInserted = $db->exec(
             "INSERT OR REPLACE INTO documents (filename, filetype, attached_notes) VALUES ('$uploadFile', '$type', ',$title,');"
         );
-        messageUser("Fichier <b>$uploadFile</b> ajouté", "alert-success");
       } catch (Throwable $error) {
         $fileInserted = false;
         messageUser($error->getMessage() . " in " .$error->getFile() . $error->getLine(), "alert-danger");
       }
+
       if($fileInserted) { 
+        $uploadStatus = true;
         if(explode("/", $type)[0] == "image") {
           try {
             $thumbnails = $pool . "/thumbnails";
@@ -116,39 +118,37 @@ if($uploadStatus == UPLOAD_ERR_OK) {
           }
         }
       } else {
-        messageUser("Le fichier <b>$uploadFile</b> n'a pas pu être ajouté à la base de données", "alert-danger");
-        try {
-          $db->exec("DELETE FROM documents WHERE filename = '$uploadFile'");
-        } catch (Throwable $error) {
+        $uploadStatus = "Le fichier <b>$uploadFile</b> n'a pas pu être ajouté à la base de données";
+        if(! unlink("$pool/$uploadFile")) {
           messageUser("On l'a copié, maintenant on ne peut plus l'enlever !", "alert-warning");
-        } finally {
         }
       }
     } else {
-      messageUser("Le fichier <b>$uploadFile</b> n'a pas pu être copié. Vérifiez les permissions sur le dossier <b>$pool</b> dans le serveur", "alert-danger");
+      $uploadStatus = "Le fichier <b>$uploadFile</b> n'a pas pu être copié. Vérifiez les permissions sur le dossier <b>$pool</b> dans le serveur";
     }
   }
 } else {
-  switch($uploadStatus) {
+  switch($uploadPreStatus) {
     case UPLOAD_ERR_INI_SIZE:
     case UPLOAD_ERR_FORM_SIZE:
-      messageUser("Fichier trop gros - limite : " . round(file_upload_max_size()/1048576) . " Mo", "alert-danger");
+      $uploadStatus = "Fichier trop gros - limite : " . round(file_upload_max_size()/1048576) . " Mo";
       break;
     case UPLOAD_ERR_PARTIAL:
-      messageUser("Le fichier n'a pas pu être récupéré", "alert-danger");
+      $uploadStatus = "Le fichier n'a pas pu être récupéré";
       break;
     case UPLOAD_ERR_NO_FILE:
-      messageUser("Le fichier est vide", "alert-danger");
+      $uploadStatus = "Le fichier est vide";
       break;
     default:
-      messageUser("Erreur interne : " . $_FILES['newfile']['error'], "alert-danger");
+      $uploadStatus = "Erreur interne : " . $_FILES['newfile']['error'];
       break;
   }
 }
 
 // Only return an answer if the engine called for this file directly :
-if($programRoot . "/engine/" . $engine_call == __file__) {
-  get_document_list();
-  return_answer();
-}
+//if($programRoot . "/engine/" . $engine_call == __file__) {
+//}
+
+get_document_list();
+$status = $uploadStatus;
 

@@ -1,5 +1,7 @@
 <?php
 
+$modifyStatus = false;
+
 if(array_key_exists("old_title", $_POST)) {
   $old_title = $_POST["old_title"];
 } else {
@@ -17,8 +19,9 @@ if($note_exists) {
     $db->querySingle(
         "UPDATE notes SET comment = '" . SQLite3::escapeString($raw_comment) . "' WHERE title = '$old_title';"
     );
-    messageUser("Note mise à jour", "alert-success");
+    $modifyStatus = true;
   } catch(Throwable $error) {
+    $modifyStatus = "Impossible d'enregistrer la note $title";
     messageUser($error->getMessage() . " in " .$error->getFile() . $error->getLine(), "alert-danger");
   }
   if($old_title != $title) {
@@ -41,19 +44,21 @@ if($note_exists) {
               "UPDATE documents SET attached_notes = '$newAttachedNotes' WHERE filename = '$filename'"
           );
         }
-        messageUser("Note renommée", "alert-success");
+        $modifyStatus = true;
       } catch(Throwable $error) {
+        $modifyStatus = "Impossible de renommer la note $old_title en $title";
         messageUser($error->getMessage() . " in " .$error->getFile() . $error->getLine(), "alert-danger");
       }
     } else {
-      messageUser("La note <b>$title</b> existe déjà", "alert-danger");
+      $modifyStatus = "La note <b>$title</b> existe déjà";
       $title = "";
     }
   }
 } else {
-  messageUser("La note <b>$old_title</b> n'existe pas", "alert-danger");
+  $modifyStatus = "La note <b>$old_title</b> n'existe pas";
   $title = "";
 }
 
 require('note/read.php');
+$status = $modifyStatus;
 

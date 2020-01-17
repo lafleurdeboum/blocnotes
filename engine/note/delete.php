@@ -1,5 +1,6 @@
 <?php
 
+$deleteStatus = false;
 load_db();
 
 $note_exists = $db->querySingle(
@@ -19,15 +20,17 @@ if($note_exists) {
         "UPDATE documents SET attached_notes = '" . $newAttachedNotes . "' WHERE filename = '$filename';"
       );
     }
-    messageUser("Note <b>$title</b> supprimée", "alert-success");
+    $deleteStatus = true;
     $title = "";
   } catch(Throwable $error) {
+    $deleteStatus = "Impossible de supprimer la note $title";
     messageUser($error->getMessage() . " in " .$error->getFile() . $error->getLine(), "alert-danger");
   }
 } else {
-  messageUser("La note $title n'existe pas", "alert-warning");
+  $deleteStatus = "La note $title n'existait pas";
   $title = "";
 }
 
 require_once 'note/read.php';
+$status = $deleteStatus;
 

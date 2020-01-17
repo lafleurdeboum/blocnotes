@@ -1,43 +1,49 @@
 <?php
 
-$filename = $_POST["filename"] ?: "";
+$filename = $_POST["filename"];
 $fileDeleted = false;
 $DBUpdated = false;
+$deleteStatus = false;
 
 load_db();
 
-try {
-  $deleteFailed = $db->querySingle(
-    "DELETE FROM documents WHERE filename = '$filename';"
-  );
-} catch (Throwable $error) {
-  messageUser($error->getMessage() . " in " .$error->getFile() . $error->getLine(), "alert-danger");
-}
-if($deleteFailed != FALSE) {
-  // The call succeeded.
-  $DBUpdated = true;
-}
+$doc_in_db = $db->querySingle(
+  "SELECT EXISTS(SELECT title FROM notes WHERE title = '$title');"
+);
+if($doc_in_db) {
+  try {
+    $db->exec(
+      "DELETE FROM documents WHERE filename = '$filename';"
+    );
+    $DBUpdated = true;
+  } catch (Throwable $error) {
+    $deleteStatus = "Impossible de supprimer $filename de la base de données";
+    messageUser($error->getMessage() . " in " .$error->getFile() . $error->getLine(), "alert-danger");
+  }
 
-if(is_file("$pool/$filename")) {
-  if(unlink("$pool/$filename")) {
-    $fileDeleted = true;
+  if($DBUpdated) {
+    if(is_file("$pool/$filename")) {
+      if(unlink("$pool/$filename")) {
+        $deleteStatus = true;
+        if(is_file("$pool/thumbnails/$filename")) {
+          try {
+            unlink("$pool/thumbnails/$filename");
+          } catch (Throwable $error) {  }
+        }
+      } else {
+        $deleteStatus = "Impossible de supprimer le fichier $filename";
+      }
+    } else {
+      $deleteStatus = "Il n'y avait pas de fichier $filename dans $pool";
+    }
   }
 } else {
-  messageUser("Il n'y avait pas de fichier $filename dans $pool", "alert-warning");
+  $deleteStatus = "Le fichier $filename n'était pas répertorié";
 }
 
-if($DBUpdated) {
-  if($fileDeleted) {
-    messageUser("Fichier $filename supprimé et retiré de la base de données", "alert-success");
-  } else {
-    messageUser("Fichier $filename retiré de la base de données", "alert-success");
-  }
-} else if($fileDeleted) {
-    messageUser("Fichier $filename supprimé", "alert-success");
-} else {
-    messageUser("Le fichier $filename n'a pas pu etre supprimé ni oublié", "alert-success");
+if($deleteStatus == true) {
+  get_document_list();
 }
 
-get_document_list();
-return_answer();
+$status = $deleteStatus;
 

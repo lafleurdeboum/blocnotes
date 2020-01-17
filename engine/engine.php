@@ -9,6 +9,7 @@ $programRoot = preg_replace("%/engine$%", "", getcwd());
 // Presume documents upload dir location :
 $pool = $programRoot . "/documents";
 
+$status = false;
 // Let includer override $dbFile ;
 if(array_key_exists('dbFile', $GLOBALS)) { $dbFile = $GLOBALS["dbFile"]; }
 else { $dbFile = $programRoot . "/admin/notes.db"; }
@@ -160,12 +161,13 @@ function parse_size($size) {
 }
 
 function return_answer() {
-  global $title, $comment, $raw_comment, $documents, $messages, $noteList;
+  global $status, $title, $comment, $raw_comment, $documents, $messages, $noteList;
 
-  // messages, notes and documents may be empty arrays.
+  $returnObject["status"] = $status;
   $returnObject["title"] = $title;
   $returnObject["raw_comment"] = $raw_comment;
   $returnObject["comment"] = $comment;
+  // messages, notes and documents may be empty arrays.
   $returnObject["messages"] = $messages;
   $returnObject["notes"] = $noteList;
   $returnObject["documents"] = $documents;
@@ -174,15 +176,17 @@ function return_answer() {
   echo "\n";
 }
 
+
+
 if(is_file("$engine_call")) {
   try {
     require($engine_call);
   } catch (Throwable $error) {
     messageUser($error->getMessage() . " in " .$error->getFile() . $error->getLine(), "alert-danger", 0);
-    return_answer();
   }
 } else {
   messageUser("'$engine_call' is not a valid engine call", "alert-danger", 0);
-  return_answer();
 }
+
+return_answer();
 
