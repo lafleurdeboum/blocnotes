@@ -23,18 +23,17 @@ function query_engine(form, callback) {
         var answer = null;
         try {
             answer = JSON.parse(event.target.responseText);
+            /*
+            if(answer.status != true) {
+                messageUser(answer.status, "alert-danger", "alert-info", 0);
+            }
+            */
             answer.messages.forEach(function(message) {
-                if(message.length == 1) {
-                    messageUser(message[0], "alert-info", 4000);
-                } else if(message.length == 2) {
-                    messageUser(message[0], message[1], 4000);
-                } else {
-                    messageUser(message[0], message[1], message[2]);
-                }
+                console.log(message[1] + " : " + message[0]);
             });
         } catch (err) {
             messageUser("Réponse de l'engin non valide :", "alert-danger");
-            messageUser(event.target.responseText, "alert-danger", timeout=0);
+            messageUser(event.target.responseText, "alert-danger", "alert-info", 0);
         }
         callback(answer);
         /*
@@ -165,8 +164,17 @@ function populateDocumentList(documents, noteTitle) {
                 deleteButton.innerHTML = feather.icons["trash-2"].toSvg();
                 deleteButton.classList.add("btn");
                 deleteButton.onclick = function(event) {
+                    var message = messageUser("Suppression de <b>" + fileinfo.filename + "</b> ...", "alert-info", 0);
                     query_engine(deleteDocForm, function(answer) {
-                        populateDocumentList(answer.documents, answer.title);
+                        if(answer.status == true) {
+                            populateDocumentList(answer.documents, answer.title);
+                            message.innerHTML = "<b>" + fileinfo.filename + "</b> supprimé";
+                            message.classList.replace("alert-info", "alert-success");
+                        } else {
+                            message.innerHTML = answer.status;
+                            message.classList.replace("alert-info", "alert-danger");
+                        }
+                        message.free();
                     });
                 };
                 link.appendChild(deleteDocForm);
@@ -180,7 +188,7 @@ function populateDocumentList(documents, noteTitle) {
     }
 }
 
-function messageUser(message, messageType, timeout) {
+function messageUser(message, messageType, timeout=4000) {
     var messageDiv = document.createElement("div");
 
     if (! messageType) {
@@ -191,12 +199,12 @@ function messageUser(message, messageType, timeout) {
                              messageType,
                              "fade",
                              "show");
-    messageDiv.role = "alert"; // TODO check this attribute
-    if(timeout || timeout != 0) {
-        if(! timeout) { timeout = 3000; }
+    //messageDiv.role = "alert"; // TODO check this attribute
+    if(timeout != 0) {
         setTimeout(function() {
             messager.removeChild(messageDiv);
         }, timeout);
+    /*
     } else {
         closeSpan = document.createElement("span");
         closeSpan.classList.add("closeButton");
@@ -205,9 +213,14 @@ function messageUser(message, messageType, timeout) {
             messager.removeChild(messageDiv);
         }
         messageDiv.appendChild(closeSpan);
+    */
     }
     messager.appendChild(messageDiv);
     console.log(messageType + " : " + message);
+    messageDiv.free = function() {
+        setTimeout(function() { messager.removeChild(messageDiv); }, 4000);
+    };
+    return messageDiv;
 }
 
 function readNote(note) {
@@ -234,12 +247,19 @@ function readNote(note) {
     uploadCreateInput.onchange = function(event) {
         for(var i=0; i < uploadCreateInput.files.length; i++) {
             var file = uploadCreateInput.files[i];
-            messageUser("uploading <b>" + file.name + "</b> ...");
+            var message = messageUser("Téléversement de <b>" + file.name + "</b> ...", "alert-info", 0);
             uploadCreateForm.title.value = file.name.replace(/\.\w+$/, "");
             query_engine(uploadCreateForm, function(answer) {
-                title = answer.title;
-                readNote(answer);
-                console.log(file.name + " uploaded");
+                if(answer.status == true) {
+                    title = answer.title;
+                    readNote(answer);
+                    message.innerHTML = "<b>" + file.name + "</b> téléversé";
+                    message.classList.replace("alert-info", "alert-success");
+                } else {
+                    message.innerHTML = answer.status;
+                    message.classList.replace("alert-info", "alert-danger");
+                }
+                message.free();
             });
         };
     };
@@ -266,10 +286,19 @@ function readNote(note) {
 }
 
 function deleteNote(note) {
+    var message = messageUser("Suppression de <b>" + note.title + "</b> ...", "alert-info", 0);
     deleteForm.title.value = note.title;
     query_engine(deleteForm, function(answer) {
-        populateMenu(answer.notes);
-        readNote(answer);
+        if(answer.status == true) {
+            populateMenu(answer.notes);
+            readNote(answer);
+            message.innerHTML = "<b>" + note.title + "</b> supprimé";
+            message.classList.replace("alert-info", "alert-success");
+        } else {
+            message.innerHTML = answer.status;
+            message.classList.replace("alert-info", "alert-danger");
+        }
+        message.free();
     });
 }
 
@@ -281,11 +310,20 @@ function createNote(note) {
 
     rightButton.innerHTML = feather.icons["save"].toSvg();
     rightButton.onclick = function(event) {
+        var message = messageUser("Enregistrement de <b>" + titleInput.value + "</b> ...", "alert-info", 0);
         createForm.title.value = titleInput.value;
         query_engine(createForm, function(answer) {
-            noteCreator.hidden = true;
-            title = answer.title;
-            readNote(answer);
+            if(answer.status == true) {
+                noteCreator.hidden = true;
+                title = answer.title;
+                readNote(answer);
+                message.innerHTML = "<b>" + titleInput.value + "</b> enregistré";
+                message.classList.replace("alert-info", "alert-success");
+            } else {
+                message.innerHTML = answer.status;
+                message.classList.replace("alert-info", "alert-danger");
+            }
+            message.free();
         });
     }
     leftButton.innerHTML = feather.icons["chevron-left"].toSvg();
@@ -312,11 +350,18 @@ function editNote(note) {
     uploadInput.onchange = function() {
         for(var i=0; i < uploadInput.files.length; i++) {
             var file = uploadInput.files[i];
-            messageUser("uploading <b>" + file.name + "</b> ...");
+            var message = messageUser("Téléversement de <b>" + file.name + "</b> ...", "alert-info", 0);
             uploadForm.title.value = note.title;
             query_engine(uploadForm, function(answer) {
-                console.log(file.name + " uploaded");
-                populateDocumentList(answer.documents, answer.title);
+                if(answer.status == true) {
+                    populateDocumentList(answer.documents, answer.title);
+                    message.innerHTML = "<b>" + file.name + "</b> téléversé";
+                    message.classList.replace("alert-info", "alert-success");
+                } else {
+                    message.innerHTML = answer.status;
+                    message.classList.replace("alert-info", "alert-danger");
+                }
+                message.free();
             });
         }
     };
@@ -333,13 +378,22 @@ function editNote(note) {
     }
     rightButton.innerHTML = feather.icons["save"].toSvg();
     rightButton.onclick = function(event) {
+        var message = messageUser("Enregistrement de <b>" + titleInput.value + "</b> ...", "alert-info", 0);
         leftMostButton.onclick = null;
         // modifyForm calls note/modify.php who moves the note to the new title
         // and relinks all the docs.
         modifyForm.title.value = titleInput.value;
         query_engine(modifyForm, function(answer) {
-            noteEditor.hidden = true;
-            readNote(answer);
+            if(answer.status == true) {
+                noteEditor.hidden = true;
+                readNote(answer);
+                message.innerHTML = "<b>" + titleInput.value + "</b> enregistré";
+                message.classList.replace("alert-info", "alert-success");
+            } else {
+                message.innerHTML = answer.status;
+                message.classList.replace("alert-info", "alert-danger");
+            }
+            message.free();
         });
     }
     leftMostButton.innerHTML = feather.icons["trash-2"].toSvg();
