@@ -188,7 +188,10 @@ function populateDocumentList(documents, noteTitle) {
     }
 }
 
-function messageUser(message, messageType, timeout=4000) {
+function messageUser(message, messageType, timeout) {
+    // Some old browsers don't support default argument value, make timeout
+    // default to 4000 :
+    if(timeout != 0 && ! timeout) { timeout = 4000; }
     var messageDiv = document.createElement("div");
 
     if (! messageType) {
