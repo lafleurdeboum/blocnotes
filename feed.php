@@ -1,15 +1,14 @@
 <?php
 
-  chdir("../engine/");
+  //header("Content-Type: application/rss+xml; charset=UTF-8");
+  header("Content-Type: text/xml");
 
-  header("Content-Type: application/rss+xml; charset=UTF-8");
+  chdir("engine/");
 
-  $address = "http://" . $_SERVER["HTTP_HOST"] . $_SERVER['REQUEST_URI'];
-  // Take off index.php + 1 dir level :
-  $address = preg_replace("/index.php$/", "", $address);
-  $address = preg_replace("/\/\w+\/$/", "", $address);
+  $address = htmlspecialchars("http://" . $_SERVER["HTTP_HOST"] . $_SERVER['REQUEST_URI']);
+  $address = preg_replace("/feed\.\w+$/", "", $address);
 
-  $rssfeed = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n";
+  $rssfeed = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
   $rssfeed .= "<rss version=\"2.0\">\n";
   $rssfeed .= "<channel>\n";
   $rssfeed .= "<title>notes du bloc:</title>\n";
@@ -18,7 +17,6 @@
   $rssfeed .= "<language>fr-fr</language>\n";
   $rssfeed .= "<copyright>Copyright (C) 2020 blocSemiColon.org</copyright>\n";
  
-  $dbFile = "../admin/notes.db";
   require_once("engine.php");
   load_db();
 
@@ -26,11 +24,11 @@
   $notes = $db->query($query);
   while($row = $notes->fetchArray()) {
     extract($row);
-    $link = $address . "?title=" . $title;
+    $link = $address . "?title=" . rawurlencode($title);
  
     $rssfeed .= "<item>\n";
     $rssfeed .= "<title>" . $title . "</title>\n";
-    $rssfeed .= "<description>" . $comment . "</description>\n";
+    $rssfeed .= "<description>" . htmlspecialchars($comment) . "</description>\n";
     $rssfeed .= "<link>" . $link . "</link>\n";
     $rssfeed .= "<pubDate>" . date("D, d M Y H:i:s O", strtotime($timestamp)) . "</pubDate>\n";
     // Crawl documents, sort images, display their thumbnail :
@@ -38,10 +36,11 @@
     if($documents) {
       while($row = $documents->fetchArray()) {
         extract($row);
+        $thumbpath = "$address/documents/thumbnails/$filename";
         $mediatype = explode("/", $filetype)[0];
         if($mediatype == "image") {
           try {
-            $rssfeed .= "<enclosure url='$address/documents/thumbnails/$filename' length='" . filesize("../documents/thumbnails/".$filename) . "' type='$filetype' />\n";
+            $rssfeed .= "<enclosure url='".rawurlencode($thumbpath)."' length='" . filesize($thumbpath) . "' type='$filetype' />\n";
           } catch (Throwable $error) {  }
         }
       }
