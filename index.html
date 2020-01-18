@@ -17,9 +17,11 @@
   
   <nav class="navbar navbar-dark bg-dark" id="nav">
 
-      <a class='navbar-brand p-0' href='.'>
-        Bloc Notes
+    <h4 class="m-0">
+      <a href='.'>
+        bloc:notes
       </a>
+    </h4>
 
       <form id="uploadCreateForm" action="engine/engine.php" method="POST">
         <input name="engine_call" value="note/createFromDoc.php" hidden />
@@ -30,8 +32,10 @@
         </button>
       </form>
 
+    <h4 class="m-0">
       <span id="titleSpan">
       </span>
+    </h4>
 
       <input id="titleInput" name="title" hidden />
 

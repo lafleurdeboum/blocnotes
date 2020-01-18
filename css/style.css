@@ -55,6 +55,7 @@ body {
 }
 #titleInput {
     flex-grow: 1;
+    align-self: center;
 }
 @media (max-width: 576px) {
   #titleInput, #titleSpan {

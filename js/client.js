@@ -273,7 +273,7 @@ function readNote(note) {
 
     var noteNav = noteReader.querySelector('.notes-nav');
     if(note.title) {
-        titleSpan.innerHTML = note.title;
+        titleSpan.innerHTML = "> " + note.title;
         titleSpan.hidden = false;
         leftMostButton.hidden = true;
         noteNav.hidden = true;
