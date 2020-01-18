@@ -9,7 +9,7 @@
   $address = preg_replace("/index.php$/", "", $address);
   $address = preg_replace("/\/\w+\/$/", "", $address);
 
-  $rssfeed = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+  $rssfeed = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n";
   $rssfeed .= "<rss version=\"2.0\">\n";
   $rssfeed .= "<channel>\n";
   $rssfeed .= "<title>notes du bloc:</title>\n";
@@ -41,7 +41,7 @@
         $mediatype = explode("/", $filetype)[0];
         if($mediatype == "image") {
           try {
-            $rssfeed .= "<enclosure url='$address/thumbnails/$filename' length='" . filesize("../thumbnails/".$filename) . "' type='$filetype' />\n";
+            $rssfeed .= "<enclosure url='$address/documents/thumbnails/$filename' length='" . filesize("../documents/thumbnails/".$filename) . "' type='$filetype' />\n";
           } catch (Throwable $error) {  }
         }
       }

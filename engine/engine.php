@@ -177,7 +177,7 @@ function return_answer() {
 }
 
 // Only process engine call if directly called :
-if (__FILE__ == $_SERVER['SCRIPT_FILENAME']) {
+if (basename(__FILE__) == basename($_SERVER["SCRIPT_NAME"])) {
   if(is_file("$engine_call")) {
     try {
       require($engine_call);
