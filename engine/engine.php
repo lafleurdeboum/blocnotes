@@ -176,17 +176,18 @@ function return_answer() {
   echo "\n";
 }
 
-
-
-if(is_file("$engine_call")) {
-  try {
-    require($engine_call);
-  } catch (Throwable $error) {
-    messageUser($error->getMessage() . " in " .$error->getFile() . $error->getLine(), "alert-danger", 0);
+// Only process engine call if directly called :
+if (__FILE__ == $_SERVER['SCRIPT_FILENAME']) {
+  if(is_file("$engine_call")) {
+    try {
+      require($engine_call);
+    } catch (Throwable $error) {
+      messageUser($error->getMessage() . " in " .$error->getFile() . $error->getLine(), "alert-danger", 0);
+    }
+  } else {
+    messageUser("'$engine_call' is not a valid engine call", "alert-danger", 0);
   }
-} else {
-  messageUser("'$engine_call' is not a valid engine call", "alert-danger", 0);
-}
 
-return_answer();
+  return_answer();
+}
 

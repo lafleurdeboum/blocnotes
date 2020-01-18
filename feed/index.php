@@ -1,5 +1,7 @@
 <?php
 
+  chdir("../engine/");
+
   header("Content-Type: application/rss+xml; charset=UTF-8");
 
   $address = "http://" . $_SERVER["HTTP_HOST"] . $_SERVER['REQUEST_URI'];
@@ -19,6 +21,7 @@
   $dbFile = "../admin/notes.db";
   require_once("engine.php");
   load_db();
+
   $query = "SELECT * FROM notes ORDER BY timestamp DESC";
   $notes = $db->query($query);
   while($row = $notes->fetchArray()) {
@@ -26,7 +29,6 @@
     $link = $address . "?title=" . $title;
  
     $rssfeed .= "<item>\n";
-
     $rssfeed .= "<title>" . $title . "</title>\n";
     $rssfeed .= "<description>" . $comment . "</description>\n";
     $rssfeed .= "<link>" . $link . "</link>\n";
@@ -38,7 +40,9 @@
         extract($row);
         $mediatype = explode("/", $filetype)[0];
         if($mediatype == "image") {
-          $rssfeed .= "<enclosure url='$address/thumbnails/$filename' length='" . filesize("../thumbnails/".$filename) . "' type='$filetype' />\n";
+          try {
+            $rssfeed .= "<enclosure url='$address/thumbnails/$filename' length='" . filesize("../thumbnails/".$filename) . "' type='$filetype' />\n";
+          } catch (Throwable $error) {  }
         }
       }
     }
