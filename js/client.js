@@ -406,6 +406,8 @@ function editNote(note) {
     }
     leftMostButton.hidden = false;
     noteEditor.hidden = false;
+    textArea = modifyForm.querySelector('textarea');
+    textArea.onfocus = function() { textArea.scrollIntoView({ block: "end", behavior: "smooth" }); };
 }
 
 document.addEventListener("DOMContentLoaded", function(event) {

@@ -138,4 +138,8 @@ nav div.alert {
 #modifyForm textarea {
   width: 100%;
 }
+@media (max-width: 576px) {
+  #modifyForm textarea {
+    height: 95vh;
+  }
 
