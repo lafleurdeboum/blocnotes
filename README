@@ -6,8 +6,8 @@ though.
 ## Install
 
 `git clone` it somewhere with http access. make shure the http server has write
-access to `admin` and `admin/notes.db`, and read access to `engine.php`,
+access to `admin` and `admin/notes.db`, and read access to `engine/engine.php`,
 `index.html` and `client.js`. Then access through `index.html` online. In case
-something goes wrong with the DB, you can go in `admin` to get a sql web
+something goes wrong with the DB, you can access `admin` to get a sql web
 interface. Be shure to set the password in `admin/phpsqliteadmin.config.php`.
 
