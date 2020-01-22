@@ -1,22 +1,26 @@
 <?php
 
-$DBFile = "rara.db";
+$oldDBFile = "rara.db";
+$DBFile = "notes.db";
 //$documentsFolder = "http://rarawoulib.org//keidee1epahmeiD9aiNoo4iluY/Rara/"
 $comments = array();
 
+// Uses $DBFile to initialize a DB in $db :
 require_once("initialize.php");
 
-echo "begin migration from db $DBFile";
+$oldDB = new SQLite3($oldDBFile);
+
+echo "begin migration from old DB file $oldDBFile into $DBFile";
 
 // Set main comment from old db :
-$mainComment = $db->querySingle(
+$mainComment = $oldDB->querySingle(
   "SELECT comment FROM files WHERE filename = '__main__';"
 );
 $retval = $db->querySingle(
   "UPDATE notes SET comment = '" . SQLite3::escapeString($mainComment) . "' WHERE title = '';"
 );
 
-$results = $db->query("SELECT filename, comment FROM files;");
+$results = $oldDB->query("SELECT filename, comment FROM files;");
 while($row = $results->fetchArray()) {
   array_push($comments, $row);
 }

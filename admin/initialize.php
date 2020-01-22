@@ -48,22 +48,6 @@
     );
     echo "added default entry<br />\n";
 
-    ## Populate files table and create a note for each file :
-
-    /*
-    $files = array_diff(scandir($documentsFolder), array('.', '..'));
-    foreach ($files as $file) {
-      $type = mime_content_type($documentsFolder . $file);
-      $title = preg_replace('/\..+$/', '', $file);
-      $db->exec(
-        "INSERT OR IGNORE INTO notes (title, comment) VALUES ('$title', '')"
-      );
-      $db->exec(
-        "INSERT OR IGNORE INTO documents (filename, filetype, attached_notes) VALUES ('$file', '$type', ',$title,')"
-      );
-    };
-    */
-
     # Check contents :
     $i = 0;
     $results = $db->query("SELECT title FROM notes");
