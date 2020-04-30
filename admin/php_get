@@ -1,4 +1,6 @@
 #!/bin/sh
 
+if test $# != 2 ; then echo -e "\nSyntax : $0 PHP_SCRIPT GET_VALUE"; exit 1; fi
+
 echo "" | php -R 'include("'$1'");' -B 'parse_str($argv[1], $_GET);' "$2"
 
