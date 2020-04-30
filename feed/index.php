@@ -1,19 +1,24 @@
 <?php
 
-  //header("Content-Type: application/rss+xml; charset=UTF-8");
-  header("Content-Type: text/xml");
+  header("Content-Type:'application/rss+xml';charset=UTF-8");
+  //header("Content-Type:application/rss+xml");
+  //header("Content-Type:'text/xml';charset='UTF-8'");
+  //header("Content-Type:'text/xml'");
 
-  chdir("engine/");
+  header("Content-Disposition:attachment;filename=feed.rss");
 
-  $address = htmlspecialchars("http://" . $_SERVER["HTTP_HOST"] . $_SERVER['REQUEST_URI']);
-  $address = preg_replace("/feed\.\w+$/", "", $address);
+  chdir("../engine/");
+
+  $self = htmlspecialchars("http://" . $_SERVER["HTTP_HOST"] . $_SERVER['REQUEST_URI']);
+  $address = preg_replace("/feed\.\w+$/", "", $self);
 
   $rssfeed = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-  $rssfeed .= "<rss version=\"2.0\">\n";
+  $rssfeed .= "<rss version=\"2.0\" xmlns:atom=\"http://www.w3.org/2005/Atom\">\n";
   $rssfeed .= "<channel>\n";
   $rssfeed .= "<title>notes du bloc:</title>\n";
   $rssfeed .= "<link>" . $address . "</link>\n";
   $rssfeed .= "<description></description>\n";
+  $rssfeed .= "<atom:link href=\"$self\" rel=\"self\" type=\"application/rss+xml\" />\n";
   $rssfeed .= "<language>fr-fr</language>\n";
   $rssfeed .= "<copyright>Copyright (C) 2020 blocSemiColon.org</copyright>\n";
  
