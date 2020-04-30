@@ -3,6 +3,13 @@
 Just another sort of pastebin for the moment, nothing fancy. Supports Markdown
 though.
 
+## Requirements
+
+You will need a server that does html with php+sqlite support ; all the comments
+will be stored in an sqlite database (namely, `admin/notes.db`). Your users will
+need a web browser. Javascript support should be optional (though recommended
+for decent user experience).
+
 ## Install
 
 `git clone` it somewhere with http access. make shure the http server has write
